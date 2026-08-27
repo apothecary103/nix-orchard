@@ -61,25 +61,64 @@ let
     in
     wanted == null || lib.any (drv: (lib.getName drv) == wanted) installedIn.${class};
 
-  theme = themes.${cfg.theme};
+  globalTheme = themes.${cfg.theme};
 
   pick =
-    kind: valid: chosen: fallback:
+    themeName: kind: valid: chosen: fallback:
     if chosen == null then
       fallback
     else
       lib.throwIf (!(lib.elem chosen valid))
-        "orchard: ${chosen} is not ${kind} of ${cfg.theme} — pick one of ${lib.concatStringsSep ", " valid}"
+        "orchard: ${chosen} is not ${kind} of ${themeName}. Choose one of ${lib.concatStringsSep ", " valid}"
         chosen;
 
-  flavorOf = source: pick "a flavor" (palette.flavorsOf theme) source.flavor theme.defaultFlavor;
-  accentOf = source: pick "an accent" (palette.accentsOf theme) source.accent theme.defaultAccent;
+  globalFlavor =
+    pick cfg.theme "a flavor" (palette.flavorsOf globalTheme) cfg.flavor
+      globalTheme.defaultFlavor;
+  globalAccent =
+    pick cfg.theme "an accent" (palette.accentsOf globalTheme) cfg.accent
+      globalTheme.defaultAccent;
+
+  themeNameOf = source: if source.theme == null then cfg.theme else source.theme;
+
+  themeOf = source: themes.${themeNameOf source};
+
+  flavorOf =
+    source:
+    let
+      themeName = themeNameOf source;
+      theme = themes.${themeName};
+      chosen =
+        if source.flavor != null then
+          source.flavor
+        else if source.theme == null then
+          cfg.flavor
+        else
+          null;
+    in
+    pick themeName "a flavor" (palette.flavorsOf theme) chosen theme.defaultFlavor;
+
+  accentOf =
+    source:
+    let
+      themeName = themeNameOf source;
+      theme = themes.${themeName};
+      chosen =
+        if source.accent != null then
+          source.accent
+        else if source.theme == null then
+          cfg.accent
+        else
+          null;
+    in
+    pick themeName "an accent" (palette.accentsOf theme) chosen theme.defaultAccent;
 
   # What the program itself calls this theme, if it ships one. `upstream = false`
   # on the port forces the generated theme instead.
   upstreamFor =
     name:
     let
+      theme = themeOf cfg.${name};
       known = (theme.upstream or { }).${name} or (_: null);
     in
     # Whether the port has the option at all is static; asking `cfg` would force
@@ -91,6 +130,9 @@ let
 
   paletteFor =
     source:
+    let
+      theme = themeOf source;
+    in
     palette.mkPalette theme {
       flavor = flavorOf source;
       accent = accentOf source;
@@ -102,12 +144,13 @@ let
   argsFor =
     name: port:
     let
+      theme = themeOf cfg.${name};
       base = {
         inherit lib pkgs config;
         p = paletteFor cfg.${name};
         cfg = cfg.${name};
         name = cfg.${name}.themeName;
-        theme = cfg.theme;
+        theme = themeNameOf cfg.${name};
         flavor = flavorOf cfg.${name};
         spec = theme;
         upstream = upstreamFor name;
@@ -143,16 +186,31 @@ let
 
       flavor = lib.mkOption {
         type = lib.types.nullOr (lib.types.enum allFlavors);
-        default = cfg.flavor;
-        defaultText = lib.literalExpression "config.orchard.flavor";
-        description = "Flavor to use for this program. Spelled `flavour` too.";
+        default = null;
+        defaultText = lib.literalExpression "config.orchard.flavor, or the per-program theme's default";
+        description = ''
+          Flavor to use for this program. Spelled `flavour` too. Null inherits
+          the global flavor while inheriting the global theme, or takes a
+          per-program theme's own default.
+        '';
       };
 
       accent = lib.mkOption {
         type = lib.types.nullOr (lib.types.enum allAccents);
-        default = cfg.accent;
-        defaultText = lib.literalExpression "config.orchard.accent";
-        description = "Accent to use for this program.";
+        default = null;
+        defaultText = lib.literalExpression "config.orchard.accent, or the per-program theme's default";
+        description = ''
+          Accent to use for this program. Null inherits the global accent while
+          inheriting the global theme, or takes a per-program theme's own
+          default.
+        '';
+      };
+
+      theme = lib.mkOption {
+        type = lib.types.nullOr (lib.types.enum names);
+        default = null;
+        defaultText = lib.literalExpression "config.orchard.theme";
+        description = "Theme to use for this program. Null inherits the global theme.";
       };
 
       palette = lib.mkOption {
@@ -168,6 +226,7 @@ let
         readOnly = true;
         default =
           let
+            theme = themeOf cfg.${name};
             known = upstreamFor name;
           in
           if known != null then known else palette.nameOf theme (flavorOf cfg.${name});
@@ -259,7 +318,10 @@ in
     palette = lib.mkOption {
       type = lib.types.attrs;
       readOnly = true;
-      default = paletteFor cfg;
+      default = palette.mkPalette globalTheme {
+        flavor = globalFlavor;
+        accent = globalAccent;
+      };
       defaultText = lib.literalExpression "every colour and role of the chosen flavor";
       description = ''
         The whole palette, for configs no port here covers. Also available as
