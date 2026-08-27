@@ -96,7 +96,11 @@ in
       upstream,
       ...
     }:
-    lib.mkIf (upstream == null) {
-      xdg.configFile."micro/colorschemes/${name}.micro".text = emit data;
+    {
+      programs.micro.settings.colorscheme = lib.mkDefault name;
+
+      xdg.configFile."micro/colorschemes/${name}.micro" = lib.mkIf (upstream == null) {
+        text = emit data;
+      };
     };
 }

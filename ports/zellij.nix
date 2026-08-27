@@ -90,7 +90,11 @@ in
       upstream,
       ...
     }:
-    lib.mkIf (upstream == null) {
-      xdg.configFile."zellij/themes/${name}.kdl".text = file data name;
+    {
+      programs.zellij.settings.theme = lib.mkDefault name;
+
+      xdg.configFile."zellij/themes/${name}.kdl" = lib.mkIf (upstream == null) {
+        text = file data name;
+      };
     };
 }

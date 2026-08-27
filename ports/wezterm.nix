@@ -85,6 +85,8 @@ in
       ...
     }:
     {
+      programs.wezterm.settings.color_scheme = lib.mkDefault name;
+
       xdg.configFile."wezterm/colors/${name}.toml".source =
         (pkgs.formats.toml { }).generate "${name}.toml"
           data;
