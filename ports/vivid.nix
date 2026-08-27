@@ -4,7 +4,7 @@ let
   # vivid's themes are hex without the '#', and every filetype group resolves
   # through the named colours below rather than repeating literals.
   theme = p: {
-    colors = lib.mapAttrs (_: render.noHash) (lib.filterAttrs (_: lib.isString) p);
+    colors = lib.mapAttrs (_: render.noHash) p.named;
 
     core = {
       regular_file.foreground = "text";

@@ -42,6 +42,8 @@ rec {
     "number"
     "string"
     "escape"
+    "escapeAlt"
+    "inlineCode"
     "special"
     "variable"
     "property"
@@ -60,10 +62,12 @@ rec {
     "search"
     "match"
     "title"
+    "secondaryAccent"
   ];
 
   statusRoles = [
     "error"
+    "errorMuted"
     "warning"
     "info"
     "hint"
@@ -110,6 +114,8 @@ rec {
     number = c.pink;
     string = c.lime;
     escape = c.yellow;
+    escapeAlt = c.red;
+    inlineCode = c.red;
     special = c.aqua;
     variable = c.text;
     property = c.skye;
@@ -119,6 +125,7 @@ rec {
     punctuation = c.overlay1;
 
     error = c.red;
+    errorMuted = c.red;
     warning = c.yellow;
     info = c.aqua;
     hint = c.skye;
@@ -131,6 +138,7 @@ rec {
     search = c.snow;
     match = c.orange;
     title = c.cherry;
+    secondaryAccent = c.blue;
 
     # Status bars are the one piece of chrome every project decides for itself
     # rather than deriving, so they get roles of their own instead of being
@@ -201,14 +209,47 @@ rec {
     in
     flat
     // {
-      surface = lib.getAttrs surfaces flat;
+      surface = {
+        shadow = flat.crust;
+        panel = flat.mantle;
+        background = flat.base;
+        neutral0 = flat.surface0;
+        neutral1 = flat.surface1;
+        neutral2 = flat.surface2;
+        neutral3 = flat.overlay0;
+        neutral4 = flat.overlay1;
+        neutral5 = flat.overlay2;
+        textDim = flat.subtext0;
+        textMuted = flat.subtext1;
+        text = flat.text;
+      };
       hue = lib.getAttrs hues flat;
-      syntax = lib.getAttrs syntaxRoles flat;
-      ui = lib.getAttrs uiRoles flat;
-      status = lib.getAttrs statusRoles flat;
-      statusBar = lib.getAttrs statusBarRoles flat;
+      syntax = (lib.getAttrs syntaxRoles flat) // {
+        function = flat.func;
+      };
+      ui = (lib.getAttrs uiRoles flat) // {
+        cursorLine = flat.cursorline;
+      };
+      status = (lib.getAttrs statusRoles flat) // {
+        success = flat.ok;
+        diffAdded = flat.add;
+        diffDeleted = flat.delete;
+        diffChanged = flat.change;
+      };
+      statusBar = {
+        background = flat.statusBg;
+        foreground = flat.statusFg;
+        dim = flat.statusDim;
+      };
       decorative.rainbow = flat.rainbow;
       terminal.ansi = flat.ansi;
+
+      # Flat string table for formats such as Helix, Starship and vivid which
+      # resolve styles by a palette key. Unlike the legacy root, it contains no
+      # theme-native or compatibility-only names.
+      named = lib.getAttrs (
+        surfaces ++ hues ++ syntaxRoles ++ uiRoles ++ statusRoles ++ statusBarRoles
+      ) flat;
 
       # `native` is the theme's own vocabulary. `raw` and the flat palette are
       # retained as compatibility aliases while ports move to the semantic

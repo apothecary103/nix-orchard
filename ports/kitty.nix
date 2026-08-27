@@ -5,39 +5,39 @@ let
     p:
     let
       slots = lib.listToAttrs (
-        lib.imap0 (i: colour: lib.nameValuePair "color${toString i}" colour) p.ansi
+        lib.imap0 (i: colour: lib.nameValuePair "color${toString i}" colour) p.terminal.ansi
       );
     in
     {
-      foreground = p.text;
-      background = p.base;
+      foreground = p.surface.text;
+      background = p.surface.background;
 
-      selection_foreground = p.text;
-      selection_background = p.selection;
+      selection_foreground = p.surface.text;
+      selection_background = p.ui.selection;
 
-      cursor = p.cursor;
-      cursor_text_color = p.base;
+      cursor = p.ui.cursor;
+      cursor_text_color = p.surface.background;
 
-      url_color = p.blue;
+      url_color = p.hue.blue;
 
-      active_border_color = p.accent;
-      inactive_border_color = p.surface1;
-      bell_border_color = p.warning;
+      active_border_color = p.ui.accent;
+      inactive_border_color = p.surface.neutral1;
+      bell_border_color = p.status.warning;
 
-      visual_bell_color = p.warning;
+      visual_bell_color = p.status.warning;
 
-      active_tab_foreground = p.base;
-      active_tab_background = p.accent;
-      inactive_tab_foreground = p.subtext0;
-      inactive_tab_background = p.surface0;
-      tab_bar_background = p.mantle;
+      active_tab_foreground = p.surface.background;
+      active_tab_background = p.ui.accent;
+      inactive_tab_foreground = p.surface.textDim;
+      inactive_tab_background = p.surface.neutral0;
+      tab_bar_background = p.surface.panel;
 
-      mark1_foreground = p.base;
-      mark1_background = p.match;
-      mark2_foreground = p.base;
-      mark2_background = p.purple;
-      mark3_foreground = p.base;
-      mark3_background = p.aqua;
+      mark1_foreground = p.surface.background;
+      mark1_background = p.ui.match;
+      mark2_foreground = p.surface.background;
+      mark2_background = p.hue.purple;
+      mark3_foreground = p.surface.background;
+      mark3_background = p.hue.aqua;
     }
     // slots;
 in

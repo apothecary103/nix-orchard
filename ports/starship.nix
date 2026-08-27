@@ -7,7 +7,7 @@ let
   theme = p: name: {
     palette = lib.mkDefault name;
 
-    palettes.${name} = lib.filterAttrs (_: lib.isString) p;
+    palettes.${name} = p.named;
 
     character = {
       success_symbol = lib.mkDefault "[❯](ok)";
@@ -16,7 +16,7 @@ let
     };
 
     git_branch.style = lib.mkDefault "bold keyword";
-    directory.style = lib.mkDefault "bold lavender";
+    directory.style = lib.mkDefault "bold secondaryAccent";
   };
 in
 {

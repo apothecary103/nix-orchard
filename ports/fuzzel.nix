@@ -9,17 +9,17 @@ let
       opaque = colour: "${render.noHash colour}ff";
     in
     {
-      background = "${render.noHash p.base}dd";
-      text = opaque p.text;
-      prompt = opaque p.subtext1;
-      placeholder = opaque p.overlay1;
-      input = opaque p.text;
-      match = opaque p.accent;
-      selection = opaque p.surface2;
-      selection-text = opaque p.text;
-      selection-match = opaque p.accent;
-      counter = opaque p.overlay1;
-      border = opaque p.accent;
+      background = "${render.noHash p.surface.background}dd";
+      text = opaque p.surface.text;
+      prompt = opaque p.surface.textMuted;
+      placeholder = opaque p.surface.neutral4;
+      input = opaque p.surface.text;
+      match = opaque p.ui.accent;
+      selection = opaque p.surface.neutral2;
+      selection-text = opaque p.surface.text;
+      selection-match = opaque p.ui.accent;
+      counter = opaque p.surface.neutral4;
+      border = opaque p.ui.accent;
     };
 in
 {

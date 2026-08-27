@@ -48,11 +48,49 @@ let
   # once, so every class binding is rendered against a palette of sentinel
   # values. `cfg` carries the union of the ports' extra options, since a probe
   # has no option tree to read defaults out of.
-  probe = lib.genAttrs required (_: "#abcdef") // {
+  probeValue = "#abcdef";
+
+  probe = lib.genAttrs required (_: probeValue) // {
     isLight = false;
     raw = { };
-    rainbow = lib.genList (_: "#abcdef") 6;
-    ansi = lib.genList (_: "#abcdef") 16;
+    native = { };
+    rainbow = lib.genList (_: probeValue) 6;
+    ansi = lib.genList (_: probeValue) 16;
+
+    surface = lib.genAttrs [
+      "shadow"
+      "panel"
+      "background"
+      "neutral0"
+      "neutral1"
+      "neutral2"
+      "neutral3"
+      "neutral4"
+      "neutral5"
+      "textDim"
+      "textMuted"
+      "text"
+    ] (_: probeValue);
+    hue = lib.genAttrs palette.hues (_: probeValue);
+    syntax = lib.genAttrs (palette.syntaxRoles ++ [ "function" ]) (_: probeValue);
+    ui = lib.genAttrs (palette.uiRoles ++ [ "cursorLine" ]) (_: probeValue);
+    status = lib.genAttrs (
+      palette.statusRoles
+      ++ [
+        "success"
+        "diffAdded"
+        "diffDeleted"
+        "diffChanged"
+      ]
+    ) (_: probeValue);
+    statusBar = lib.genAttrs [
+      "background"
+      "foreground"
+      "dim"
+    ] (_: probeValue);
+    decorative.rainbow = lib.genList (_: probeValue) 6;
+    terminal.ansi = lib.genList (_: probeValue) 16;
+    named = lib.genAttrs required (_: probeValue);
   };
 
   render =

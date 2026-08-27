@@ -4,17 +4,17 @@ let
   # catppuccin/tofi is four lines; the rest below are tofi's own defaults spelled
   # out so the launcher does not fall back to its built-in blue.
   theme = p: {
-    text-color = p.text;
-    prompt-color = p.red;
-    selection-color = p.warning;
-    background-color = p.base;
+    text-color = p.surface.text;
+    prompt-color = p.hue.red;
+    selection-color = p.status.warning;
+    background-color = p.surface.background;
 
-    placeholder-color = p.overlay1;
-    input-color = p.text;
-    default-result-color = p.subtext1;
-    selection-match-color = p.match;
-    border-color = p.accent;
-    outline-color = p.crust;
+    placeholder-color = p.surface.neutral4;
+    input-color = p.surface.text;
+    default-result-color = p.surface.textMuted;
+    selection-match-color = p.ui.match;
+    border-color = p.ui.accent;
+    outline-color = p.surface.shadow;
   };
 in
 {

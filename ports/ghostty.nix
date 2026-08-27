@@ -4,21 +4,21 @@ let
   # catppuccin/ghostty. The selection background is the overlay a fifth of the
   # way into the base; everything else is a straight palette entry.
   theme = p: {
-    palette = lib.imap0 (i: colour: "${toString i}=${colour}") p.ansi;
+    palette = lib.imap0 (i: colour: "${toString i}=${colour}") p.terminal.ansi;
 
-    background = p.base;
-    foreground = p.text;
+    background = p.surface.background;
+    foreground = p.surface.text;
 
-    cursor-color = p.cursor;
-    cursor-text = if p.isLight then p.base else p.crust;
+    cursor-color = p.ui.cursor;
+    cursor-text = if p.isLight then p.surface.background else p.surface.shadow;
 
     selection-background = render.mix {
-      colour = p.overlay2;
-      over = p.base;
+      colour = p.surface.neutral5;
+      over = p.surface.background;
     } 0.2;
-    selection-foreground = p.text;
+    selection-foreground = p.surface.text;
 
-    split-divider-color = p.surface0;
+    split-divider-color = p.surface.neutral0;
   };
 in
 {

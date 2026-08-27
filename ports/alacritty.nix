@@ -19,56 +19,56 @@ let
             "magenta"
             "cyan"
             "white"
-          ] (lib.sublist offset 8 p.ansi)
+          ] (lib.sublist offset 8 p.terminal.ansi)
         );
     in
     {
       primary = {
-        background = p.base;
-        foreground = p.text;
-        dim_foreground = p.overlay1;
-        bright_foreground = p.text;
+        background = p.surface.background;
+        foreground = p.surface.text;
+        dim_foreground = p.surface.neutral4;
+        bright_foreground = p.surface.text;
       };
 
       cursor = {
-        text = p.base;
-        cursor = p.cursor;
+        text = p.surface.background;
+        cursor = p.ui.cursor;
       };
       vi_mode_cursor = {
-        text = p.base;
-        cursor = p.lavender;
+        text = p.surface.background;
+        cursor = p.ui.secondaryAccent;
       };
 
       search = {
         matches = {
-          foreground = p.base;
-          background = p.subtext0;
+          foreground = p.surface.background;
+          background = p.surface.textDim;
         };
         focused_match = {
-          foreground = p.base;
-          background = p.ok;
+          foreground = p.surface.background;
+          background = p.status.success;
         };
       };
 
       footer_bar = {
-        foreground = p.base;
-        background = p.subtext0;
+        foreground = p.surface.background;
+        background = p.surface.textDim;
       };
 
       hints = {
         start = {
-          foreground = p.base;
-          background = p.warning;
+          foreground = p.surface.background;
+          background = p.status.warning;
         };
         end = {
-          foreground = p.base;
-          background = p.subtext0;
+          foreground = p.surface.background;
+          background = p.surface.textDim;
         };
       };
 
       selection = {
-        text = p.base;
-        background = p.cursor;
+        text = p.surface.background;
+        background = p.ui.cursor;
       };
 
       normal = slots 0;
@@ -77,11 +77,11 @@ let
       indexed_colors = [
         {
           index = 16;
-          color = p.orange;
+          color = p.hue.orange;
         }
         {
           index = 17;
-          color = p.cherry;
+          color = p.hue.cherry;
         }
       ];
     };

@@ -10,33 +10,33 @@ let
       c = render.noHash;
     in
     {
-      fish_color_normal = c p.text;
-      fish_color_command = c p.func;
-      fish_color_param = c p.cherry;
-      fish_color_keyword = c p.keyword;
-      fish_color_quote = c p.string;
-      fish_color_redirection = c p.pink;
-      fish_color_end = c p.orange;
-      fish_color_comment = c p.overlay1;
-      fish_color_error = c p.error;
-      fish_color_gray = c p.overlay0;
-      fish_color_selection = "--background=${c p.surface0}";
-      fish_color_search_match = "--background=${c p.surface0}";
-      fish_color_option = c p.string;
-      fish_color_operator = c p.pink;
-      fish_color_escape = c p.maroon;
-      fish_color_autosuggestion = c p.overlay0;
-      fish_color_cancel = c p.error;
-      fish_color_cwd = c p.yellow;
-      fish_color_user = c p.aqua;
-      fish_color_host = c p.func;
-      fish_color_host_remote = c p.ok;
-      fish_color_status = c p.error;
+      fish_color_normal = c p.surface.text;
+      fish_color_command = c p.syntax.function;
+      fish_color_param = c p.hue.cherry;
+      fish_color_keyword = c p.syntax.keyword;
+      fish_color_quote = c p.syntax.string;
+      fish_color_redirection = c p.hue.pink;
+      fish_color_end = c p.hue.orange;
+      fish_color_comment = c p.surface.neutral4;
+      fish_color_error = c p.status.error;
+      fish_color_gray = c p.surface.neutral3;
+      fish_color_selection = "--background=${c p.surface.neutral0}";
+      fish_color_search_match = "--background=${c p.surface.neutral0}";
+      fish_color_option = c p.syntax.string;
+      fish_color_operator = c p.hue.pink;
+      fish_color_escape = c p.syntax.escapeAlt;
+      fish_color_autosuggestion = c p.surface.neutral3;
+      fish_color_cancel = c p.status.error;
+      fish_color_cwd = c p.hue.yellow;
+      fish_color_user = c p.hue.aqua;
+      fish_color_host = c p.syntax.function;
+      fish_color_host_remote = c p.status.success;
+      fish_color_status = c p.status.error;
 
-      fish_pager_color_progress = c p.overlay0;
-      fish_pager_color_prefix = c p.pink;
-      fish_pager_color_completion = c p.text;
-      fish_pager_color_description = c p.overlay0;
+      fish_pager_color_progress = c p.surface.neutral3;
+      fish_pager_color_prefix = c p.hue.pink;
+      fish_pager_color_completion = c p.surface.text;
+      fish_pager_color_description = c p.surface.neutral3;
     };
 
   # A theme file alone would only take effect once `fish_config theme choose`

@@ -117,13 +117,13 @@ rec {
         			<key>settings</key>
         			<dict>
         ${settings {
-          background = p.base;
-          foreground = p.text;
-          caret = p.cursor;
-          lineHighlight = p.cursorline;
-          selection = p.selection;
-          invisibles = p.overlay0;
-          gutterForeground = p.surface2;
+          background = p.surface.background;
+          foreground = p.surface.text;
+          caret = p.ui.cursor;
+          lineHighlight = p.ui.cursorLine;
+          selection = p.ui.selection;
+          invisibles = p.surface.neutral3;
+          gutterForeground = p.surface.neutral2;
         }}
         			</dict>
         		</dict>'';
@@ -131,7 +131,7 @@ rec {
       rules = [
         global
         (rule "Comment" "comment, punctuation.definition.comment" {
-          foreground = p.comment;
+          foreground = p.syntax.comment;
           fontStyle = "italic";
         })
         # `punctuation.definition.string` is listed here rather than left to the
@@ -139,73 +139,73 @@ rec {
         # so this is what keeps quotes the colour of what they wrap.
         (rule "String" "string, string.quoted, punctuation.definition.string, markup.raw, markup.inline.raw"
           {
-            foreground = p.string;
+            foreground = p.syntax.string;
           }
         )
         (rule "String escape and regexp" "constant.character.escape, string.regexp" {
-          foreground = p.escape;
+          foreground = p.syntax.escape;
         })
         (rule "Keyword" "keyword, keyword.control, storage, storage.type, storage.modifier" {
-          foreground = p.keyword;
+          foreground = p.syntax.keyword;
         })
-        (rule "Operator" "keyword.operator" { foreground = p.operator; })
+        (rule "Operator" "keyword.operator" { foreground = p.syntax.operator; })
         (rule "Number and language constant" "constant.numeric, constant.language" {
-          foreground = p.number;
+          foreground = p.syntax.number;
         })
         (rule "Constant" "constant.other, support.constant, variable.other.constant" {
-          foreground = p.constant;
+          foreground = p.syntax.constant;
         })
         (rule "Function" "entity.name.function, support.function, meta.function-call, variable.function" {
-          foreground = p.func;
+          foreground = p.syntax.function;
         })
         (rule "Macro" "support.macro, support.function.macro, entity.name.function.macro, meta.preprocessor"
           {
-            foreground = p.macro;
+            foreground = p.syntax.macro;
           }
         )
         (rule "Type"
           "entity.name.type, entity.name.class, support.class, support.type, entity.other.inherited-class"
           {
-            foreground = p.type;
+            foreground = p.syntax.type;
           }
         )
         (rule "Namespace" "entity.name.namespace, support.other.namespace, entity.name.module" {
-          foreground = p.module;
+          foreground = p.syntax.module;
         })
         (rule "Import" "keyword.control.import, keyword.other.import, meta.import" {
-          foreground = p.annotation;
+          foreground = p.syntax.annotation;
         })
-        (rule "Variable" "variable, variable.other" { foreground = p.variable; })
-        (rule "Parameter" "variable.parameter" { foreground = p.variable; })
+        (rule "Variable" "variable, variable.other" { foreground = p.syntax.variable; })
+        (rule "Parameter" "variable.parameter" { foreground = p.syntax.variable; })
         (rule "Property"
           "meta.object-literal.key, support.type.property-name, entity.name.tag.yaml, variable.other.member"
           {
-            foreground = p.property;
+            foreground = p.syntax.property;
           }
         )
-        (rule "Tag" "entity.name.tag" { foreground = p.property; })
-        (rule "Attribute" "entity.other.attribute-name" { foreground = p.annotation; })
-        (rule "Punctuation" "punctuation, meta.brace" { foreground = p.punctuation; })
+        (rule "Tag" "entity.name.tag" { foreground = p.syntax.property; })
+        (rule "Attribute" "entity.other.attribute-name" { foreground = p.syntax.annotation; })
+        (rule "Punctuation" "punctuation, meta.brace" { foreground = p.syntax.punctuation; })
         (rule "Heading" "entity.name.section, markup.heading" {
-          foreground = lib.elemAt p.rainbow 0;
+          foreground = lib.elemAt p.decorative.rainbow 0;
           fontStyle = "bold";
         })
         (rule "Bold" "markup.bold" {
-          foreground = p.text;
+          foreground = p.surface.text;
           fontStyle = "bold";
         })
         (rule "Italic" "markup.italic" { fontStyle = "italic"; })
         (rule "Link" "markup.underline.link, markup.link" {
-          foreground = p.blue;
+          foreground = p.hue.blue;
           fontStyle = "underline";
         })
-        (rule "List" "markup.list" { foreground = p.punctuation; })
-        (rule "Diff inserted" "markup.inserted" { foreground = p.add; })
-        (rule "Diff deleted" "markup.deleted" { foreground = p.delete; })
-        (rule "Diff changed" "markup.changed" { foreground = p.change; })
+        (rule "List" "markup.list" { foreground = p.syntax.punctuation; })
+        (rule "Diff inserted" "markup.inserted" { foreground = p.status.diffAdded; })
+        (rule "Diff deleted" "markup.deleted" { foreground = p.status.diffDeleted; })
+        (rule "Diff changed" "markup.changed" { foreground = p.status.diffChanged; })
         (rule "Invalid" "invalid, invalid.illegal" {
-          foreground = p.base;
-          background = p.error;
+          foreground = p.surface.background;
+          background = p.status.error;
         })
       ];
     in

@@ -9,12 +9,12 @@ let
     p:
     let
       hues = lib.unique [
-        p.accent
-        p.keyword
-        p.string
-        p.type
-        p.info
-        p.match
+        p.ui.accent
+        p.syntax.keyword
+        p.syntax.string
+        p.syntax.type
+        p.status.info
+        p.ui.match
       ];
 
       style =
@@ -29,25 +29,25 @@ let
         );
     in
     {
-      text_unselected = style p.text p.mantle;
-      text_selected = style p.text p.selection;
+      text_unselected = style p.surface.text p.surface.panel;
+      text_selected = style p.surface.text p.ui.selection;
 
-      ribbon_unselected = style p.text p.surface1;
-      ribbon_selected = style p.base p.accent;
+      ribbon_unselected = style p.surface.text p.surface.neutral1;
+      ribbon_selected = style p.surface.background p.ui.accent;
 
-      table_title = style p.title p.mantle;
-      table_cell_unselected = style p.text p.mantle;
-      table_cell_selected = style p.text p.selection;
+      table_title = style p.ui.title p.surface.panel;
+      table_cell_unselected = style p.surface.text p.surface.panel;
+      table_cell_selected = style p.surface.text p.ui.selection;
 
-      list_unselected = style p.text p.mantle;
-      list_selected = style p.text p.selection;
+      list_unselected = style p.surface.text p.surface.panel;
+      list_selected = style p.surface.text p.ui.selection;
 
-      frame_unselected = style p.surface1 p.base;
-      frame_selected = style p.accent p.base;
-      frame_highlight = style p.match p.base;
+      frame_unselected = style p.surface.neutral1 p.surface.background;
+      frame_selected = style p.ui.accent p.surface.background;
+      frame_highlight = style p.ui.match p.surface.background;
 
-      exit_code_success = style p.ok p.mantle;
-      exit_code_error = style p.error p.mantle;
+      exit_code_success = style p.status.success p.surface.panel;
+      exit_code_error = style p.status.error p.surface.panel;
 
       # multiplayer_user_colors is left alone: zellij defaults it to ANSI slots,
       # which the terminal ports here already paint.

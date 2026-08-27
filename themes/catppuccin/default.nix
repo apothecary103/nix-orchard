@@ -82,6 +82,8 @@
     number = p.peach;
     string = p.green;
     escape = p.pink;
+    escapeAlt = p.maroon;
+    inlineCode = p.maroon;
     special = p.sky;
     variable = p.text;
     property = p.teal;
@@ -91,6 +93,7 @@
     punctuation = p.overlay2;
 
     error = p.red;
+    errorMuted = p.maroon;
     warning = p.yellow;
     info = p.sky;
     hint = p.teal;
@@ -103,6 +106,7 @@
     search = p.sky;
     match = p.peach;
     title = p.lavender;
+    secondaryAccent = p.lavender;
 
     # catppuccin/helix's six heading levels, which is where the ramp shows.
     rainbow = [

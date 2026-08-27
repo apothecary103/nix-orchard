@@ -7,50 +7,50 @@ let
   theme =
     { p, transparent }:
     {
-      default = if transparent then p.text else "${p.text},${p.base}";
-      comment = p.comment;
-      selection = "${p.text},${p.surface1}";
-      hlsearch = p.aqua;
+      default = if transparent then p.surface.text else "${p.surface.text},${p.surface.background}";
+      comment = p.syntax.comment;
+      selection = "${p.surface.text},${p.surface.neutral1}";
+      hlsearch = p.hue.aqua;
 
-      identifier = p.func;
-      "identifier.class" = p.func;
-      "identifier.var" = p.func;
+      identifier = p.syntax.function;
+      "identifier.class" = p.syntax.function;
+      "identifier.var" = p.syntax.function;
 
-      constant = p.constant;
-      "constant.number" = p.number;
-      "constant.string" = p.string;
+      constant = p.syntax.constant;
+      "constant.number" = p.syntax.number;
+      "constant.string" = p.syntax.string;
 
-      symbol = p.pink;
-      "symbol.brackets" = p.cherry;
-      "symbol.tag" = p.func;
+      symbol = p.hue.pink;
+      "symbol.brackets" = p.hue.cherry;
+      "symbol.tag" = p.syntax.function;
 
-      type = p.func;
-      "type.keyword" = p.type;
+      type = p.syntax.function;
+      "type.keyword" = p.syntax.type;
 
-      special = p.pink;
-      statement = p.keyword;
-      preproc = p.pink;
+      special = p.hue.pink;
+      statement = p.syntax.keyword;
+      preproc = p.hue.pink;
 
-      underlined = p.skye;
-      error = "bold ${p.error}";
-      todo = "bold ${p.warning}";
+      underlined = p.hue.skye;
+      error = "bold ${p.status.error}";
+      todo = "bold ${p.status.warning}";
 
-      "diff-added" = p.add;
-      "diff-modified" = p.change;
-      "diff-deleted" = p.delete;
+      "diff-added" = p.status.diffAdded;
+      "diff-modified" = p.status.diffChanged;
+      "diff-deleted" = p.status.diffDeleted;
 
-      "gutter-error" = p.error;
-      "gutter-warning" = p.warning;
+      "gutter-error" = p.status.error;
+      "gutter-warning" = p.status.warning;
 
-      scrollbar = p.overlay2;
-      statusline = "${p.text},${p.mantle}";
-      tabbar = "${p.text},${p.mantle}";
-      "indent-char" = p.surface1;
-      "line-number" = p.surface1;
-      "current-line-number" = p.lavender;
+      scrollbar = p.surface.neutral5;
+      statusline = "${p.surface.text},${p.surface.panel}";
+      tabbar = "${p.surface.text},${p.surface.panel}";
+      "indent-char" = p.surface.neutral1;
+      "line-number" = p.surface.neutral1;
+      "current-line-number" = p.ui.secondaryAccent;
 
-      "cursor-line" = "${p.cursorline},${p.text}";
-      "color-column" = p.surface0;
+      "cursor-line" = "${p.ui.cursorLine},${p.surface.text}";
+      "color-column" = p.surface.neutral0;
       "type.extended" = "default";
     };
 

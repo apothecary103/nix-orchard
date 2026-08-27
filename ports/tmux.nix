@@ -7,64 +7,64 @@ let
   # themed without one.
   theme = p: {
     variables = {
-      thm_bg = p.base;
-      thm_fg = p.text;
+      thm_bg = p.surface.background;
+      thm_fg = p.surface.text;
 
-      thm_red = p.red;
-      thm_orange = p.orange;
-      thm_yellow = p.yellow;
-      thm_lime = p.lime;
-      thm_green = p.green;
-      thm_aqua = p.aqua;
-      thm_skye = p.skye;
-      thm_snow = p.snow;
-      thm_blue = p.blue;
-      thm_purple = p.purple;
-      thm_pink = p.pink;
-      thm_cherry = p.cherry;
+      thm_red = p.hue.red;
+      thm_orange = p.hue.orange;
+      thm_yellow = p.hue.yellow;
+      thm_lime = p.hue.lime;
+      thm_green = p.hue.green;
+      thm_aqua = p.hue.aqua;
+      thm_skye = p.hue.skye;
+      thm_snow = p.hue.snow;
+      thm_blue = p.hue.blue;
+      thm_purple = p.hue.purple;
+      thm_pink = p.hue.pink;
+      thm_cherry = p.hue.cherry;
 
-      thm_accent = p.accent;
+      thm_accent = p.ui.accent;
 
-      thm_subtext_1 = p.subtext0;
-      thm_subtext_0 = p.subtext1;
-      thm_overlay_2 = p.overlay2;
-      thm_overlay_1 = p.overlay1;
-      thm_overlay_0 = p.overlay0;
-      thm_surface_2 = p.surface2;
-      thm_surface_1 = p.surface1;
-      thm_surface_0 = p.surface0;
-      thm_mantle = p.mantle;
-      thm_crust = p.crust;
+      thm_subtext_1 = p.surface.textDim;
+      thm_subtext_0 = p.surface.textMuted;
+      thm_overlay_2 = p.surface.neutral5;
+      thm_overlay_1 = p.surface.neutral4;
+      thm_overlay_0 = p.surface.neutral3;
+      thm_surface_2 = p.surface.neutral2;
+      thm_surface_1 = p.surface.neutral1;
+      thm_surface_0 = p.surface.neutral0;
+      thm_mantle = p.surface.panel;
+      thm_crust = p.surface.shadow;
     };
 
     # Styles only, no status-left/right content, so this composes with whatever
     # status line you already have. Later config wins.
     styles = {
-      mode-style = "fg=${p.base},bg=${p.accent}";
-      message-style = "fg=${p.text},bg=${p.surface0}";
-      message-command-style = "fg=${p.text},bg=${p.surface0}";
+      mode-style = "fg=${p.surface.background},bg=${p.ui.accent}";
+      message-style = "fg=${p.surface.text},bg=${p.surface.neutral0}";
+      message-command-style = "fg=${p.surface.text},bg=${p.surface.neutral0}";
 
-      pane-border-style = "fg=${p.surface1}";
-      pane-active-border-style = "fg=${p.accent}";
+      pane-border-style = "fg=${p.surface.neutral1}";
+      pane-active-border-style = "fg=${p.ui.accent}";
 
-      status-style = "fg=${p.subtext0},bg=${p.mantle}";
-      status-left-style = "fg=${p.accent},bg=${p.mantle}";
-      status-right-style = "fg=${p.subtext0},bg=${p.mantle}";
+      status-style = "fg=${p.surface.textDim},bg=${p.surface.panel}";
+      status-left-style = "fg=${p.ui.accent},bg=${p.surface.panel}";
+      status-right-style = "fg=${p.surface.textDim},bg=${p.surface.panel}";
 
-      display-panes-active-colour = p.accent;
-      display-panes-colour = p.overlay0;
+      display-panes-active-colour = p.ui.accent;
+      display-panes-colour = p.surface.neutral3;
 
-      copy-mode-match-style = "fg=${p.base},bg=${p.search}";
-      copy-mode-current-match-style = "fg=${p.base},bg=${p.match}";
-      copy-mode-mark-style = "fg=${p.base},bg=${p.accent}";
+      copy-mode-match-style = "fg=${p.surface.background},bg=${p.ui.search}";
+      copy-mode-current-match-style = "fg=${p.surface.background},bg=${p.ui.match}";
+      copy-mode-mark-style = "fg=${p.surface.background},bg=${p.ui.accent}";
     };
 
     windowStyles = {
-      window-status-style = "fg=${p.overlay1},bg=${p.mantle}";
-      window-status-current-style = "fg=${p.accent},bg=${p.mantle},bold";
-      window-status-activity-style = "fg=${p.warning},bg=${p.mantle}";
-      window-status-bell-style = "fg=${p.error},bg=${p.mantle},bold";
-      clock-mode-colour = p.accent;
+      window-status-style = "fg=${p.surface.neutral4},bg=${p.surface.panel}";
+      window-status-current-style = "fg=${p.ui.accent},bg=${p.surface.panel},bold";
+      window-status-activity-style = "fg=${p.status.warning},bg=${p.surface.panel}";
+      window-status-bell-style = "fg=${p.status.error},bg=${p.surface.panel},bold";
+      clock-mode-colour = p.ui.accent;
     };
   };
 

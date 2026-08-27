@@ -4,12 +4,12 @@ let
   # catppuccin/mako, which colours the border by urgency and leaves the rest of
   # the notification alone.
   theme = p: {
-    background-color = p.base;
-    text-color = p.text;
-    border-color = p.accent;
-    progress-color = "over ${p.surface0}";
+    background-color = p.surface.background;
+    text-color = p.surface.text;
+    border-color = p.ui.accent;
+    progress-color = "over ${p.surface.neutral0}";
 
-    "urgency=high".border-color = p.orange;
+    "urgency=high".border-color = p.hue.orange;
   };
 in
 {

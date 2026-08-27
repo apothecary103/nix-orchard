@@ -7,21 +7,21 @@ let
   theme =
     { p, transparent }:
     {
-      "bg+" = if transparent then "-1" else p.surface0;
-      bg = if transparent then "-1" else p.base;
-      spinner = p.cherry;
-      hl = p.red;
-      fg = p.text;
-      header = p.red;
-      info = p.keyword;
-      pointer = p.cherry;
-      marker = p.lavender;
-      "fg+" = p.text;
-      prompt = p.keyword;
-      "hl+" = p.red;
-      "selected-bg" = p.surface1;
-      border = p.overlay0;
-      label = p.text;
+      "bg+" = if transparent then "-1" else p.surface.neutral0;
+      bg = if transparent then "-1" else p.surface.background;
+      spinner = p.hue.cherry;
+      hl = p.hue.red;
+      fg = p.surface.text;
+      header = p.hue.red;
+      info = p.syntax.keyword;
+      pointer = p.hue.cherry;
+      marker = p.ui.secondaryAccent;
+      "fg+" = p.surface.text;
+      prompt = p.syntax.keyword;
+      "hl+" = p.hue.red;
+      "selected-bg" = p.surface.neutral1;
+      border = p.surface.neutral3;
+      label = p.surface.text;
     };
 in
 {

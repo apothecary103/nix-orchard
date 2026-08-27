@@ -6,23 +6,23 @@ let
   theme = p: {
     gui.theme = {
       activeBorderColor = [
-        p.accent
+        p.ui.accent
         "bold"
       ];
-      inactiveBorderColor = [ p.subtext0 ];
-      searchingActiveBorderColor = [ p.warning ];
-      optionsTextColor = [ p.blue ];
-      selectedLineBgColor = [ p.surface0 ];
-      inactiveViewSelectedLineBgColor = [ p.overlay0 ];
-      cherryPickedCommitFgColor = [ p.accent ];
-      cherryPickedCommitBgColor = [ p.surface1 ];
-      markedBaseCommitFgColor = [ p.blue ];
-      markedBaseCommitBgColor = [ p.warning ];
-      unstagedChangesColor = [ p.error ];
-      defaultFgColor = [ p.text ];
+      inactiveBorderColor = [ p.surface.textDim ];
+      searchingActiveBorderColor = [ p.status.warning ];
+      optionsTextColor = [ p.hue.blue ];
+      selectedLineBgColor = [ p.surface.neutral0 ];
+      inactiveViewSelectedLineBgColor = [ p.surface.neutral3 ];
+      cherryPickedCommitFgColor = [ p.ui.accent ];
+      cherryPickedCommitBgColor = [ p.surface.neutral1 ];
+      markedBaseCommitFgColor = [ p.hue.blue ];
+      markedBaseCommitBgColor = [ p.status.warning ];
+      unstagedChangesColor = [ p.status.error ];
+      defaultFgColor = [ p.surface.text ];
     };
 
-    gui.authorColors."*" = p.lavender;
+    gui.authorColors."*" = p.ui.secondaryAccent;
   };
 in
 {

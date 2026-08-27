@@ -23,18 +23,18 @@ let
         colour: amount:
         render.mix {
           inherit colour;
-          over = p.base;
+          over = p.surface.background;
         } amount;
 
       # Upstream derives these rather than picking a palette step: the cursor
       # line is a fraction of surface0 over the background, and each secondary
       # cursor is its primary washed out to 70%.
       derived = {
-        cursorline = if p.isLight then over p.mantle 0.7 else over p.surface0 0.64;
-        secondary_cursor = over p.cursor 0.7;
-        secondary_cursor_normal = over p.cursor 0.7;
-        secondary_cursor_insert = over p.ok 0.7;
-        secondary_cursor_select = over p.info 0.7;
+        cursorline = if p.isLight then over p.surface.panel 0.7 else over p.surface.neutral0 0.64;
+        secondary_cursor = over p.ui.cursor 0.7;
+        secondary_cursor_normal = over p.ui.cursor 0.7;
+        secondary_cursor_insert = over p.status.success 0.7;
+        secondary_cursor_select = over p.status.info 0.7;
       };
     in
     {
@@ -271,10 +271,10 @@ let
       # Helix resolves every name above against this table, so the six rainbow
       # steps and the derived shades have to appear in it as entries.
       palette =
-        lib.filterAttrs (_: lib.isString) p
+        p.named
         // derived
         // lib.listToAttrs (
-          lib.imap0 (i: colour: lib.nameValuePair "rainbow${toString i}" colour) p.rainbow
+          lib.imap0 (i: colour: lib.nameValuePair "rainbow${toString i}" colour) p.decorative.rainbow
         );
     };
 in

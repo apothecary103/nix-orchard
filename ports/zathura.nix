@@ -16,43 +16,43 @@ let
       rgb = colour: rgba colour "1";
     in
     {
-      default-fg = rgb p.text;
-      default-bg = rgb p.base;
+      default-fg = rgb p.surface.text;
+      default-bg = rgb p.surface.background;
 
-      completion-bg = rgb p.surface0;
-      completion-fg = rgb p.text;
-      completion-highlight-bg = rgb p.accent;
-      completion-highlight-fg = rgb p.base;
-      completion-group-bg = rgb p.mantle;
-      completion-group-fg = rgb p.text;
+      completion-bg = rgb p.surface.neutral0;
+      completion-fg = rgb p.surface.text;
+      completion-highlight-bg = rgb p.ui.accent;
+      completion-highlight-fg = rgb p.surface.background;
+      completion-group-bg = rgb p.surface.panel;
+      completion-group-fg = rgb p.surface.text;
 
-      statusbar-fg = rgb p.text;
-      statusbar-bg = rgb p.crust;
-      inputbar-fg = rgb p.text;
-      inputbar-bg = rgb p.base;
+      statusbar-fg = rgb p.surface.text;
+      statusbar-bg = rgb p.surface.shadow;
+      inputbar-fg = rgb p.surface.text;
+      inputbar-bg = rgb p.surface.background;
 
-      notification-bg = rgb p.base;
-      notification-fg = rgb p.text;
-      notification-error-bg = rgb p.base;
-      notification-error-fg = rgb p.error;
-      notification-warning-bg = rgb p.base;
-      notification-warning-fg = rgb p.warning;
+      notification-bg = rgb p.surface.background;
+      notification-fg = rgb p.surface.text;
+      notification-error-bg = rgb p.surface.background;
+      notification-error-fg = rgb p.status.error;
+      notification-warning-bg = rgb p.surface.background;
+      notification-warning-fg = rgb p.status.warning;
 
       recolor = true;
-      recolor-lightcolor = rgb p.base;
-      recolor-darkcolor = rgb p.text;
+      recolor-lightcolor = rgb p.surface.background;
+      recolor-darkcolor = rgb p.surface.text;
 
-      index-fg = rgb p.text;
-      index-bg = rgb p.base;
-      index-active-fg = rgb p.text;
-      index-active-bg = rgb p.surface0;
+      index-fg = rgb p.surface.text;
+      index-bg = rgb p.surface.background;
+      index-active-fg = rgb p.surface.text;
+      index-active-bg = rgb p.surface.neutral0;
 
-      render-loading-bg = rgb p.base;
-      render-loading-fg = rgb p.text;
+      render-loading-bg = rgb p.surface.background;
+      render-loading-fg = rgb p.surface.text;
 
-      highlight-color = rgba p.overlay2 "0.3";
-      highlight-fg = rgb p.text;
-      highlight-active-color = rgba p.accent "0.3";
+      highlight-color = rgba p.surface.neutral5 "0.3";
+      highlight-fg = rgb p.surface.text;
+      highlight-active-color = rgba p.ui.accent "0.3";
     };
 in
 {

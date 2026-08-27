@@ -3,47 +3,47 @@
 let
   theme = p: {
     colors = {
-      foreground = p.text;
-      background = p.base;
+      foreground = p.surface.text;
+      background = p.surface.background;
 
-      cursor_bg = p.cursor;
-      cursor_fg = p.base;
-      cursor_border = p.cursor;
+      cursor_bg = p.ui.cursor;
+      cursor_fg = p.surface.background;
+      cursor_border = p.ui.cursor;
 
-      selection_fg = p.text;
-      selection_bg = p.selection;
+      selection_fg = p.surface.text;
+      selection_bg = p.ui.selection;
 
-      scrollbar_thumb = p.surface2;
-      split = p.surface1;
+      scrollbar_thumb = p.surface.neutral2;
+      split = p.surface.neutral1;
 
-      ansi = lib.sublist 0 8 p.ansi;
-      brights = lib.sublist 8 8 p.ansi;
+      ansi = lib.sublist 0 8 p.terminal.ansi;
+      brights = lib.sublist 8 8 p.terminal.ansi;
 
-      compose_cursor = p.match;
+      compose_cursor = p.ui.match;
 
       tab_bar = {
-        background = p.crust;
-        inactive_tab_edge = p.surface0;
+        background = p.surface.shadow;
+        inactive_tab_edge = p.surface.neutral0;
 
         active_tab = {
-          bg_color = p.base;
-          fg_color = p.text;
+          bg_color = p.surface.background;
+          fg_color = p.surface.text;
         };
         inactive_tab = {
-          bg_color = p.mantle;
-          fg_color = p.subtext0;
+          bg_color = p.surface.panel;
+          fg_color = p.surface.textDim;
         };
         inactive_tab_hover = {
-          bg_color = p.surface0;
-          fg_color = p.text;
+          bg_color = p.surface.neutral0;
+          fg_color = p.surface.text;
         };
         new_tab = {
-          bg_color = p.mantle;
-          fg_color = p.subtext0;
+          bg_color = p.surface.panel;
+          fg_color = p.surface.textDim;
         };
         new_tab_hover = {
-          bg_color = p.surface0;
-          fg_color = p.text;
+          bg_color = p.surface.neutral0;
+          fg_color = p.surface.text;
         };
       };
     };

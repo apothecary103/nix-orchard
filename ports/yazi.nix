@@ -5,109 +5,109 @@ let
   # section — the part a palette-derived theme usually drops and the part you
   # actually look at.
   theme = p: {
-    app.overall.bg = p.base;
+    app.overall.bg = p.surface.background;
 
     mgr = {
-      cwd.fg = p.aqua;
+      cwd.fg = p.hue.aqua;
 
       find_keyword = {
-        fg = p.yellow;
+        fg = p.hue.yellow;
         italic = true;
       };
       find_position = {
-        fg = p.pink;
+        fg = p.hue.pink;
         bg = "reset";
         italic = true;
       };
 
       marker_copied = {
-        fg = p.ok;
-        bg = p.ok;
+        fg = p.status.success;
+        bg = p.status.success;
       };
       marker_cut = {
-        fg = p.error;
-        bg = p.error;
+        fg = p.status.error;
+        bg = p.status.error;
       };
       marker_marked = {
-        fg = p.aqua;
-        bg = p.aqua;
+        fg = p.hue.aqua;
+        bg = p.hue.aqua;
       };
       marker_selected = {
-        fg = p.accent;
-        bg = p.accent;
+        fg = p.ui.accent;
+        bg = p.ui.accent;
       };
 
       count_copied = {
-        fg = p.base;
-        bg = p.ok;
+        fg = p.surface.background;
+        bg = p.status.success;
       };
       count_cut = {
-        fg = p.base;
-        bg = p.error;
+        fg = p.surface.background;
+        bg = p.status.error;
       };
       count_selected = {
-        fg = p.base;
-        bg = p.accent;
+        fg = p.surface.background;
+        bg = p.ui.accent;
       };
 
       border_symbol = "│";
-      border_style.fg = p.overlay1;
+      border_style.fg = p.surface.neutral4;
     };
 
     tabs = {
       active = {
-        fg = p.base;
-        bg = p.text;
+        fg = p.surface.background;
+        bg = p.surface.text;
         bold = true;
       };
       inactive = {
-        fg = p.text;
-        bg = p.surface1;
+        fg = p.surface.text;
+        bg = p.surface.neutral1;
       };
     };
 
     mode = {
       normal_main = {
-        fg = p.base;
-        bg = p.accent;
+        fg = p.surface.background;
+        bg = p.ui.accent;
         bold = true;
       };
       normal_alt = {
-        fg = p.accent;
-        bg = p.surface0;
+        fg = p.ui.accent;
+        bg = p.surface.neutral0;
       };
       select_main = {
-        fg = p.base;
-        bg = p.ok;
+        fg = p.surface.background;
+        bg = p.status.success;
         bold = true;
       };
       select_alt = {
-        fg = p.ok;
-        bg = p.surface0;
+        fg = p.status.success;
+        bg = p.surface.neutral0;
       };
       unset_main = {
-        fg = p.base;
-        bg = p.cherry;
+        fg = p.surface.background;
+        bg = p.hue.cherry;
         bold = true;
       };
       unset_alt = {
-        fg = p.cherry;
-        bg = p.surface0;
+        fg = p.hue.cherry;
+        bg = p.surface.neutral0;
       };
     };
 
     indicator = {
       parent = {
-        fg = p.base;
-        bg = p.text;
+        fg = p.surface.background;
+        bg = p.surface.text;
       };
       current = {
-        fg = p.base;
-        bg = p.accent;
+        fg = p.surface.background;
+        bg = p.ui.accent;
       };
       preview = {
-        fg = p.base;
-        bg = p.text;
+        fg = p.surface.background;
+        bg = p.surface.text;
       };
     };
 
@@ -122,139 +122,139 @@ let
       };
 
       progress_label = {
-        fg = p.text;
+        fg = p.surface.text;
         bold = true;
       };
       progress_normal = {
-        fg = p.ok;
-        bg = p.surface1;
+        fg = p.status.success;
+        bg = p.surface.neutral1;
       };
       progress_error = {
-        fg = p.warning;
-        bg = p.error;
+        fg = p.status.warning;
+        bg = p.status.error;
       };
 
-      perm_type.fg = p.blue;
-      perm_read.fg = p.yellow;
-      perm_write.fg = p.red;
-      perm_exec.fg = p.green;
-      perm_sep.fg = p.overlay1;
+      perm_type.fg = p.hue.blue;
+      perm_read.fg = p.hue.yellow;
+      perm_write.fg = p.hue.red;
+      perm_exec.fg = p.hue.green;
+      perm_sep.fg = p.surface.neutral4;
     };
 
     input = {
-      border.fg = p.accent;
+      border.fg = p.ui.accent;
       title = { };
       value = { };
       selected.reversed = true;
     };
 
     pick = {
-      border.fg = p.accent;
-      active.fg = p.pink;
+      border.fg = p.ui.accent;
+      active.fg = p.hue.pink;
       inactive = { };
     };
 
     confirm = {
-      border.fg = p.accent;
-      title.fg = p.accent;
+      border.fg = p.ui.accent;
+      title.fg = p.ui.accent;
       body = { };
       list = { };
       btn_yes.reversed = true;
       btn_no = { };
     };
 
-    cmp.border.fg = p.accent;
+    cmp.border.fg = p.ui.accent;
 
     tasks = {
-      border.fg = p.accent;
+      border.fg = p.ui.accent;
       title = { };
       hovered = {
-        fg = p.pink;
+        fg = p.hue.pink;
         bold = true;
       };
     };
 
     which = {
-      mask.bg = p.surface0;
-      cand.fg = p.aqua;
-      rest.fg = p.overlay2;
-      desc.fg = p.pink;
+      mask.bg = p.surface.neutral0;
+      cand.fg = p.hue.aqua;
+      rest.fg = p.surface.neutral5;
+      desc.fg = p.hue.pink;
       separator = "  ";
-      separator_style.fg = p.surface2;
+      separator_style.fg = p.surface.neutral2;
     };
 
     help = {
-      on.fg = p.aqua;
-      run.fg = p.pink;
-      desc.fg = p.overlay2;
+      on.fg = p.hue.aqua;
+      run.fg = p.hue.pink;
+      desc.fg = p.surface.neutral5;
       hovered = {
-        bg = p.surface2;
+        bg = p.surface.neutral2;
         bold = true;
       };
       footer = {
-        fg = p.text;
-        bg = p.surface1;
+        fg = p.surface.text;
+        bg = p.surface.neutral1;
       };
     };
 
     notify = {
-      title_info.fg = p.aqua;
-      title_warn.fg = p.warning;
-      title_error.fg = p.error;
+      title_info.fg = p.hue.aqua;
+      title_warn.fg = p.status.warning;
+      title_error.fg = p.status.error;
     };
 
     filetype.rules = [
       {
         mime = "image/*";
-        fg = p.yellow;
+        fg = p.hue.yellow;
       }
       {
         mime = "{audio,video}/*";
-        fg = p.pink;
+        fg = p.hue.pink;
       }
       {
         mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
-        fg = p.red;
+        fg = p.hue.red;
       }
       {
         mime = "application/{pdf,doc,rtf}";
-        fg = p.skye;
+        fg = p.hue.skye;
       }
       {
         mime = "vfs/{absent,stale}";
-        fg = p.surface1;
+        fg = p.surface.neutral1;
       }
       {
         url = "*";
         is = "orphan";
-        bg = p.red;
+        bg = p.hue.red;
       }
       {
         url = "*";
         is = "exec";
-        fg = p.green;
+        fg = p.hue.green;
       }
       {
         url = "*";
         is = "dummy";
-        bg = p.red;
+        bg = p.hue.red;
       }
       {
         url = "*/";
         is = "dummy";
-        bg = p.red;
+        bg = p.hue.red;
       }
       {
         url = "*/";
-        fg = p.accent;
+        fg = p.ui.accent;
       }
     ];
 
     spot = {
-      border.fg = p.accent;
-      title.fg = p.accent;
+      border.fg = p.ui.accent;
+      title.fg = p.ui.accent;
       tbl_cell = {
-        fg = p.accent;
+        fg = p.ui.accent;
         reversed = true;
       };
       tbl_col.bold = true;
@@ -268,72 +268,72 @@ let
         {
           name = ".config";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = ".git";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = ".github";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = ".npm";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Desktop";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Development";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Documents";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Downloads";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Library";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Movies";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Music";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Pictures";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Public";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           name = "Videos";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
       ];
 
@@ -341,57 +341,57 @@ let
         {
           "if" = "orphan";
           text = "";
-          fg = p.text;
+          fg = p.surface.text;
         }
         {
           "if" = "link";
           text = "";
-          fg = p.subtext0;
+          fg = p.surface.textDim;
         }
         {
           "if" = "block";
           text = "";
-          fg = p.yellow;
+          fg = p.hue.yellow;
         }
         {
           "if" = "char";
           text = "";
-          fg = p.yellow;
+          fg = p.hue.yellow;
         }
         {
           "if" = "fifo";
           text = "";
-          fg = p.yellow;
+          fg = p.hue.yellow;
         }
         {
           "if" = "sock";
           text = "";
-          fg = p.yellow;
+          fg = p.hue.yellow;
         }
         {
           "if" = "sticky";
           text = "";
-          fg = p.yellow;
+          fg = p.hue.yellow;
         }
         {
           "if" = "dummy";
           text = "";
-          fg = p.red;
+          fg = p.hue.red;
         }
         {
           "if" = "dir";
           text = "";
-          fg = p.accent;
+          fg = p.ui.accent;
         }
         {
           "if" = "exec";
           text = "";
-          fg = p.green;
+          fg = p.hue.green;
         }
         {
           "if" = "!dir";
           text = "";
-          fg = p.text;
+          fg = p.surface.text;
         }
       ];
     };

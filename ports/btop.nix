@@ -5,67 +5,67 @@ let
   # travels across distinct hues rather than sitting on one, which is what makes
   # btop readable at a glance.
   theme = p: {
-    main_bg = p.base;
-    main_fg = p.text;
-    title = p.text;
-    hi_fg = p.accent;
-    selected_bg = p.surface1;
-    selected_fg = p.accent;
-    inactive_fg = p.overlay1;
-    graph_text = p.cherry;
-    meter_bg = p.surface1;
-    proc_misc = p.cherry;
+    main_bg = p.surface.background;
+    main_fg = p.surface.text;
+    title = p.surface.text;
+    hi_fg = p.ui.accent;
+    selected_bg = p.surface.neutral1;
+    selected_fg = p.ui.accent;
+    inactive_fg = p.surface.neutral4;
+    graph_text = p.hue.cherry;
+    meter_bg = p.surface.neutral1;
+    proc_misc = p.hue.cherry;
 
-    cpu_box = p.purple;
-    mem_box = p.green;
-    net_box = p.red;
-    proc_box = p.blue;
-    div_line = p.overlay0;
+    cpu_box = p.hue.purple;
+    mem_box = p.hue.green;
+    net_box = p.hue.red;
+    proc_box = p.hue.blue;
+    div_line = p.surface.neutral3;
 
     temp = [
-      p.green
-      p.yellow
-      p.red
+      p.hue.green
+      p.hue.yellow
+      p.hue.red
     ];
     cpu = [
-      p.aqua
-      p.snow
-      p.lavender
+      p.hue.aqua
+      p.hue.snow
+      p.ui.secondaryAccent
     ];
     free = [
-      p.purple
-      p.lavender
-      p.blue
+      p.hue.purple
+      p.ui.secondaryAccent
+      p.hue.blue
     ];
     cached = [
-      p.snow
-      p.blue
-      p.lavender
+      p.hue.snow
+      p.hue.blue
+      p.ui.secondaryAccent
     ];
     available = [
-      p.orange
-      p.maroon
-      p.red
+      p.hue.orange
+      p.status.errorMuted
+      p.hue.red
     ];
     used = [
-      p.green
-      p.aqua
-      p.skye
+      p.hue.green
+      p.hue.aqua
+      p.hue.skye
     ];
     download = [
-      p.orange
-      p.maroon
-      p.red
+      p.hue.orange
+      p.status.errorMuted
+      p.hue.red
     ];
     upload = [
-      p.green
-      p.aqua
-      p.skye
+      p.hue.green
+      p.hue.aqua
+      p.hue.skye
     ];
     process = [
-      p.snow
-      p.lavender
-      p.purple
+      p.hue.snow
+      p.ui.secondaryAccent
+      p.hue.purple
     ];
   };
 

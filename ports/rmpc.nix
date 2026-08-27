@@ -9,41 +9,41 @@ let
       bold = attrs: attrs // { modifiers = "Bold"; };
     in
     {
-      text_color = p.text;
-      background_color = p.base;
-      header_background_color = p.mantle;
-      modal_background_color = p.mantle;
+      text_color = p.surface.text;
+      background_color = p.surface.background;
+      header_background_color = p.surface.panel;
+      modal_background_color = p.surface.panel;
 
-      borders_style.fg = p.surface2;
-      highlight_border_style.fg = p.accent;
+      borders_style.fg = p.surface.neutral2;
+      highlight_border_style.fg = p.ui.accent;
 
       tab_bar = {
         active_style = bold {
-          fg = p.base;
-          bg = p.accent;
+          fg = p.surface.background;
+          bg = p.ui.accent;
         };
         inactive_style = {
-          fg = p.subtext0;
-          bg = p.mantle;
+          fg = p.surface.textDim;
+          bg = p.surface.panel;
         };
       };
 
-      highlighted_item_style = bold { fg = p.accent; };
+      highlighted_item_style = bold { fg = p.ui.accent; };
       current_item_style = bold {
-        fg = p.base;
-        bg = p.accent;
+        fg = p.surface.background;
+        bg = p.ui.accent;
       };
 
       progress_bar = {
-        track_style.fg = p.surface1;
-        elapsed_style.fg = p.accent;
-        thumb_style.fg = p.accent;
+        track_style.fg = p.surface.neutral1;
+        elapsed_style.fg = p.ui.accent;
+        thumb_style.fg = p.ui.accent;
       };
 
       scrollbar = {
-        track_style.fg = p.surface1;
-        ends_style.fg = p.surface1;
-        thumb_style.fg = p.accent;
+        track_style.fg = p.surface.neutral1;
+        ends_style.fg = p.surface.neutral1;
+        thumb_style.fg = p.ui.accent;
       };
     };
 
