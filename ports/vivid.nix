@@ -70,7 +70,7 @@ in
 
   # vivid bundles catppuccin, all six gruvbox contrasts and both onedark ends,
   # each with a curated filetype table far longer than the one below.
-  upstream = true;
+  integration = { };
 
   theme = { p, ... }: theme p;
 

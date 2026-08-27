@@ -24,9 +24,15 @@
   defaultAccent = "blue";
 
   # btop calls the light one plain `adwaita`; helix ships both.
-  upstream = {
-    helix = flavor: "adwaita-${flavor}";
-    btop = flavor: if flavor == "light" then "adwaita" else "adwaita-dark";
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: "adwaita-${flavor}";
+    };
+    btop = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then "adwaita" else "adwaita-dark";
+    };
   };
 
   colours =

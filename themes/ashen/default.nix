@@ -27,7 +27,10 @@
   # helix ships it, written by ashen's own author. Ashen also publishes its own
   # ports for yazi, fzf and fish; those are reproduced below rather than
   # generated, because a theme this monochrome does not survive being derived.
-  upstream.helix = _: "ashen";
+  integrations.helix = {
+    kind = "builtin";
+    name = _: "ashen";
+  };
 
   ports = {
     yazi =

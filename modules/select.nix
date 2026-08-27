@@ -113,20 +113,56 @@ let
     in
     pick themeName "an accent" (palette.accentsOf theme) chosen theme.defaultAccent;
 
-  # What the program itself calls this theme, if it ships one. `upstream = false`
-  # on the port forces the generated theme instead.
+  # Resolve the best integration for a program. Auto uses a built-in only when
+  # it can honour the requested accent and transparency; otherwise it falls
+  # back to Orchard's generated port.
+  integrationFor =
+    name:
+    if !(ports.${name} ? integration) then
+      null
+    else
+      let
+        theme = themeOf cfg.${name};
+        declared = (theme.integrations or { }).${name} or null;
+        available =
+          if declared == null then
+            null
+          else
+            let
+              upstreamName = declared.name (flavorOf cfg.${name});
+            in
+            if upstreamName == null then null else declared // { name = upstreamName; };
+        capabilities = {
+          accent = false;
+          transparent = false;
+        }
+        // (ports.${name}.integration.upstream or { });
+        supported =
+          (capabilities.accent || accentOf cfg.${name} == theme.defaultAccent)
+          && (capabilities.transparent || !(cfg.${name}.transparent or false));
+        requested = cfg.${name}.source;
+      in
+      if requested == "generated" then
+        null
+      else if requested == "upstream" then
+        lib.throwIf (available == null)
+          "orchard: ${themeNameOf cfg.${name}} has no upstream ${name} integration"
+          (
+            lib.throwIf (!supported)
+              "orchard: the upstream ${name} integration cannot honour the requested accent or transparency; use source = \"auto\" or \"generated\""
+              available
+          )
+      else if available != null && supported then
+        available
+      else
+        null;
+
   upstreamFor =
     name:
     let
-      theme = themeOf cfg.${name};
-      known = (theme.upstream or { }).${name} or (_: null);
+      integration = integrationFor name;
     in
-    # Whether the port has the option at all is static; asking `cfg` would force
-    # the whole port, and `themeName` is in there asking this same question.
-    if (ports.${name}.upstream or false) && cfg.${name}.upstream then
-      known (flavorOf cfg.${name})
-    else
-      null;
+    if integration == null then null else integration.name;
 
   paletteFor =
     source:
@@ -152,6 +188,7 @@ let
         name = cfg.${name}.themeName;
         theme = themeNameOf cfg.${name};
         flavor = flavorOf cfg.${name};
+        accent = accentOf cfg.${name};
         spec = theme;
         upstream = upstreamFor name;
         port = name;
@@ -228,20 +265,44 @@ let
           let
             theme = themeOf cfg.${name};
             known = upstreamFor name;
+            baseName = if known != null then known else palette.nameOf theme (flavorOf cfg.${name});
+            resolveName = port.resolveName or ({ name, ... }: name);
           in
-          if known != null then known else palette.nameOf theme (flavorOf cfg.${name});
+          resolveName {
+            name = baseName;
+            upstream = known;
+            cfg = cfg.${name};
+          };
         description = "Name this program resolves the theme by.";
       };
     }
-    // lib.optionalAttrs (port.upstream or false) {
-      upstream = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
+    // lib.optionalAttrs (port ? integration) {
+      source = lib.mkOption {
+        type = lib.types.enum [
+          "auto"
+          "upstream"
+          "generated"
+        ];
+        default = "auto";
         description = ''
-          Prefer the theme this program ships itself, where it ships one. Those
-          are hand-tuned against the program's own internals — syntax scopes,
-          gradients, icon sets — but they are fixed, so the accent has no say in
-          them. Turn it off to generate from the palette instead.
+          Where this program's theme comes from. Auto prefers an upstream theme
+          when it exists and can honour the requested accent and transparency,
+          then falls back to Orchard's generated theme. Upstream requires a
+          compatible built-in integration; generated always uses the palette.
+        '';
+      };
+
+      resolvedSource = lib.mkOption {
+        type = lib.types.str;
+        readOnly = true;
+        default =
+          let
+            integration = integrationFor name;
+          in
+          if integration == null then "generated" else integration.kind;
+        description = ''
+          Source actually selected for this program: generated, builtin, or an
+          official theme integration.
         '';
       };
     }

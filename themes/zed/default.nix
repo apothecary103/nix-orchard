@@ -23,8 +23,11 @@
 
   # helix ships both, contributed rather than derived. Nothing else does: One
   # Dark elsewhere is Atom's, which is `themes/onedark`.
-  upstream = {
-    helix = flavor: "zed_one${flavor}";
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: "zed_one${flavor}";
+    };
   };
 
   # `mantle` sits *above* `base`, as in luna: Zed's chrome gets lighter as it

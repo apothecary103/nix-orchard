@@ -285,7 +285,15 @@ in
 
   # helix resolves its own themes by name, so where it ships one there is
   # nothing to write: the config just points at it.
-  upstream = true;
+  integration.upstream.transparent = true;
+
+  resolveName =
+    {
+      name,
+      upstream,
+      cfg,
+    }:
+    if upstream != null && cfg.transparent then "${name}-transparent" else name;
 
   # Helix ships hand-tuned themes for most of what orchard carries, written
   # against its own treesitter queries — around ninety scopes where the
@@ -308,7 +316,7 @@ in
         # config names the built-in and no file is written at all. `name` is
         # the built-in, and the file this lands in is `<name>-transparent`, so
         # this is not a theme inheriting itself.
-        inherits = name;
+        inherits = upstream;
 
         # Helix's own recipe for a see-through variant: an empty ui.background
         # leaves both the foreground and the fill to the terminal.
@@ -331,16 +339,10 @@ in
         upstream,
         ...
       }:
-      let
-        # A built-in is used as it is unless the background has to come off, and
-        # then it is inherited under a name of its own — a theme cannot inherit
-        # itself.
-        wanted = if upstream != null && cfg.transparent then "${name}-transparent" else name;
-      in
       lib.mkMerge [
-        { rum.programs.helix.settings.theme = lib.mkDefault wanted; }
+        { rum.programs.helix.settings.theme = lib.mkDefault name; }
         (lib.mkIf (upstream == null || cfg.transparent) {
-          rum.programs.helix.themes.${wanted} = data;
+          rum.programs.helix.themes.${name} = data;
         })
       ];
   };
@@ -356,13 +358,10 @@ in
         upstream,
         ...
       }:
-      let
-        wanted = if upstream != null && cfg.transparent then "${name}-transparent" else name;
-      in
       lib.mkMerge [
-        { programs.helix.settings.theme = lib.mkDefault wanted; }
+        { programs.helix.settings.theme = lib.mkDefault name; }
         (lib.mkIf (upstream == null || cfg.transparent) {
-          programs.helix.themes.${wanted} = data;
+          programs.helix.themes.${name} = data;
         })
       ];
   };

@@ -29,40 +29,58 @@
   # background — bat — collapse them, and the ones that do keep them apart.
   # btop's `gruvbox_dark` is the hard contrast and its `_v2` the medium one,
   # which is the opposite of what the names suggest.
-  upstream = {
-    helix =
-      flavor:
-      {
-        dark = "gruvbox";
-        dark-hard = "gruvbox_dark_hard";
-        dark-soft = "gruvbox_dark_soft";
-        light = "gruvbox_light";
-        light-hard = "gruvbox_light_hard";
-        light-soft = "gruvbox_light_soft";
-      }
-      .${flavor};
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name =
+        flavor:
+        {
+          dark = "gruvbox";
+          dark-hard = "gruvbox_dark_hard";
+          dark-soft = "gruvbox_dark_soft";
+          light = "gruvbox_light";
+          light-hard = "gruvbox_light_hard";
+          light-soft = "gruvbox_light_soft";
+        }
+        .${flavor};
+    };
 
-    bat = flavor: if lib.hasPrefix "light" flavor then "gruvbox-light" else "gruvbox-dark";
+    bat = {
+      kind = "builtin";
+      name = flavor: if lib.hasPrefix "light" flavor then "gruvbox-light" else "gruvbox-dark";
+    };
 
-    btop =
-      flavor:
-      {
-        dark = "gruvbox_dark_v2";
-        dark-hard = "gruvbox_dark";
-        dark-soft = "gruvbox_dark_v2";
-        light = "gruvbox_light";
-        light-hard = "gruvbox_light";
-        light-soft = "gruvbox_light";
-      }
-      .${flavor};
+    btop = {
+      kind = "builtin";
+      name =
+        flavor:
+        {
+          dark = "gruvbox_dark_v2";
+          dark-hard = "gruvbox_dark";
+          dark-soft = "gruvbox_dark_v2";
+          light = "gruvbox_light";
+          light-hard = "gruvbox_light";
+          light-soft = "gruvbox_light";
+        }
+        .${flavor};
+    };
 
     # micro ships only the dark one, and `-tc` is its truecolor build.
-    micro = flavor: if lib.hasPrefix "light" flavor then null else "gruvbox-tc";
+    micro = {
+      kind = "builtin";
+      name = flavor: if lib.hasPrefix "light" flavor then null else "gruvbox-tc";
+    };
 
     # vivid names all six exactly as orchard does.
-    vivid = flavor: "gruvbox-${flavor}";
+    vivid = {
+      kind = "builtin";
+      name = flavor: "gruvbox-${flavor}";
+    };
 
-    zellij = flavor: if lib.hasPrefix "light" flavor then "gruvbox-light" else "gruvbox-dark";
+    zellij = {
+      kind = "builtin";
+      name = flavor: if lib.hasPrefix "light" flavor then "gruvbox-light" else "gruvbox-dark";
+    };
   };
 
   colours = { raw, ... }: raw;

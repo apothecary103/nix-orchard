@@ -26,9 +26,15 @@
   defaultAccent = "green";
 
   # Only helix and btop know it, and only in the dark.
-  upstream = {
-    helix = flavor: if lib.hasPrefix "dark" flavor then "gruvbox-material" else null;
-    btop = flavor: if lib.hasPrefix "dark" flavor then "gruvbox_material_dark" else null;
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: if lib.hasPrefix "dark" flavor then "gruvbox-material" else null;
+    };
+    btop = {
+      kind = "builtin";
+      name = flavor: if lib.hasPrefix "dark" flavor then "gruvbox_material_dark" else null;
+    };
   };
 
   colours = { raw, ... }: raw;

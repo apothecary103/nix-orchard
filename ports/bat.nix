@@ -33,7 +33,7 @@ in
   # Sublime themes with the scope coverage that implies. It also paints no
   # background — checked, not assumed — so gruvbox's hard and soft contrasts are
   # indistinguishable here and one entry serves all three.
-  upstream = true;
+  integration = { };
 
   theme = { p, name, ... }: render.mkTmTheme { inherit name p; };
 

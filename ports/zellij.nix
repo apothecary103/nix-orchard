@@ -68,7 +68,7 @@ in
 
   # zellij bundles catppuccin, gruvbox and onedark in its own component format,
   # hand-authored per component rather than derived from twelve colours.
-  upstream = true;
+  integration = { };
 
   theme = { p, ... }: theme p;
 

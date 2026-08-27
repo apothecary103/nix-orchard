@@ -63,15 +63,21 @@ in
       p,
       spec,
       flavor,
-      name,
+      accent,
       ...
     }:
     let
-      known = ((spec.upstream or { }).bat or (_: null)) flavor;
+      integration = (spec.integrations or { }).bat or null;
+      known =
+        if integration == null || accent != spec.defaultAccent then null else integration.name flavor;
     in
     theme {
       inherit p;
-      name = if known != null then known else name;
+      # Delta and bat share syntect's bundled themes, but Delta cannot load an
+      # arbitrary Orchard theme file directly. ANSI is the honest generated
+      # fallback: it follows the terminal palette instead of naming an asset
+      # that Delta cannot resolve.
+      name = if known != null then known else "ansi";
     };
 
   hjem = {

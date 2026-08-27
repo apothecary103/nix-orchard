@@ -94,7 +94,7 @@ in
   # btop bundles hand-tuned themes for gruvbox, gruvbox-material, onedark and
   # adwaita, gradients and all. Not catppuccin — that one lives in
   # catppuccin/btop, which the generated theme below already follows.
-  upstream = true;
+  integration = { };
 
   theme = { p, ... }: theme p;
 

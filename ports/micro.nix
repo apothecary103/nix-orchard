@@ -67,7 +67,7 @@ in
   program = "micro";
 
   # micro bundles gruvbox and one-dark as full colorschemes.
-  upstream = true;
+  integration = { };
 
   transparency = true;
 

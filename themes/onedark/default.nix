@@ -22,12 +22,27 @@
   defaultAccent = "blue";
 
   # Atom's own names, which every program spells slightly differently.
-  upstream = {
-    helix = flavor: if flavor == "light" then "onelight" else "onedark";
-    btop = flavor: if flavor == "light" then null else "onedark";
-    micro = flavor: if flavor == "light" then null else "one-dark";
-    vivid = flavor: if flavor == "light" then "one-light" else "one-dark";
-    zellij = flavor: if flavor == "light" then null else "onedark";
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then "onelight" else "onedark";
+    };
+    btop = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then null else "onedark";
+    };
+    micro = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then null else "one-dark";
+    };
+    vivid = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then "one-light" else "one-dark";
+    };
+    zellij = {
+      kind = "builtin";
+      name = flavor: if flavor == "light" then null else "onedark";
+    };
   };
 
   colours = { raw, ... }: raw;

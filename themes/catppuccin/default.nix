@@ -32,11 +32,23 @@
   # of the overlapping ones differently. Both vocabularies stay live.
   # bat, vivid and zellij all bundle every flavor; btop does not, because
   # catppuccin/btop is where its theme lives and the generated one follows it.
-  upstream = {
-    helix = flavor: "catppuccin_${flavor}";
-    bat = flavor: "Catppuccin ${lib.toUpper (lib.substring 0 1 flavor)}${lib.substring 1 (-1) flavor}";
-    vivid = flavor: "catppuccin-${flavor}";
-    zellij = flavor: "catppuccin-${flavor}";
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: "catppuccin_${flavor}";
+    };
+    bat = {
+      kind = "builtin";
+      name = flavor: "Catppuccin ${lib.toUpper (lib.substring 0 1 flavor)}${lib.substring 1 (-1) flavor}";
+    };
+    vivid = {
+      kind = "builtin";
+      name = flavor: "catppuccin-${flavor}";
+    };
+    zellij = {
+      kind = "builtin";
+      name = flavor: "catppuccin-${flavor}";
+    };
   };
 
   colours =

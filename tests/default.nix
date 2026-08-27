@@ -72,6 +72,7 @@ let
         name = "probe";
         theme = "probe";
         flavor = "probe";
+        accent = "probe";
         spec = { };
         upstream = if upstream then "probe-upstream" else null;
         port = name;
