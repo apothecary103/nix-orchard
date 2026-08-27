@@ -33,6 +33,52 @@ rec {
     "cherry"
   ];
 
+  syntaxRoles = [
+    "keyword"
+    "func"
+    "macro"
+    "type"
+    "constant"
+    "number"
+    "string"
+    "escape"
+    "special"
+    "variable"
+    "property"
+    "module"
+    "annotation"
+    "operator"
+    "punctuation"
+    "comment"
+  ];
+
+  uiRoles = [
+    "accent"
+    "cursor"
+    "selection"
+    "cursorline"
+    "search"
+    "match"
+    "title"
+  ];
+
+  statusRoles = [
+    "error"
+    "warning"
+    "info"
+    "hint"
+    "ok"
+    "add"
+    "delete"
+    "change"
+  ];
+
+  statusBarRoles = [
+    "statusBg"
+    "statusFg"
+    "statusDim"
+  ];
+
   # Catppuccin's vocabulary, so a hand-styled config written against it resolves
   # under any theme. A theme that has its own value for one of these keeps it —
   # these are only the fallbacks.
@@ -148,7 +194,26 @@ rec {
       named = theme.accents.${accent};
       accentColour = if lib.hasPrefix "#" named then named else colours.${named};
     in
-    lib.fix (
-      self: colours // roles self // (theme.roles or (_: { })) self // { accent = accentColour; }
-    );
+    let
+      flat = lib.fix (
+        self: colours // roles self // (theme.roles or (_: { })) self // { accent = accentColour; }
+      );
+    in
+    flat
+    // {
+      surface = lib.getAttrs surfaces flat;
+      hue = lib.getAttrs hues flat;
+      syntax = lib.getAttrs syntaxRoles flat;
+      ui = lib.getAttrs uiRoles flat;
+      status = lib.getAttrs statusRoles flat;
+      statusBar = lib.getAttrs statusBarRoles flat;
+      decorative.rainbow = flat.rainbow;
+      terminal.ansi = flat.ansi;
+
+      # `native` is the theme's own vocabulary. `raw` and the flat palette are
+      # retained as compatibility aliases while ports move to the semantic
+      # namespaces above.
+      native = raw;
+      compat.catppuccin = compat flat;
+    };
 }
