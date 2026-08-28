@@ -96,7 +96,7 @@ in
     config =
       { data, ... }:
       {
-        programs.git.delta.options = data;
+        programs.delta.options = data;
       };
   };
 }

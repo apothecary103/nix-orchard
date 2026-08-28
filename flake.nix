@@ -2,9 +2,13 @@
   description = "Orchard: hand-crafted themes as home-manager, hjem and NixOS modules";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  inputs.home-manager = {
+    url = "github:nix-community/home-manager";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs =
-    { nixpkgs, ... }:
+    { nixpkgs, home-manager, ... }:
     let
       inherit (nixpkgs) lib;
 
@@ -45,6 +49,7 @@
         system:
         import ./tests {
           inherit lib engine;
+          homeManager = home-manager;
           pkgs = nixpkgs.legacyPackages.${system};
         }
       );

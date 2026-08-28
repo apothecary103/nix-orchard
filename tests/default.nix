@@ -2,6 +2,7 @@
   lib,
   pkgs,
   engine,
+  homeManager,
 }:
 
 let
@@ -93,15 +94,43 @@ let
     named = lib.genAttrs required (_: probeValue);
   };
 
+  programNames = lib.unique (
+    lib.attrNames ports
+    ++ [
+      "git"
+      "zsh"
+    ]
+  );
+
+  fakeConfig = {
+    packages = [ ];
+    home.packages = [ ];
+    rum.programs = lib.genAttrs programNames (_: {
+      enable = true;
+    });
+    programs =
+      lib.genAttrs programNames (_: {
+        enable = true;
+      })
+      // {
+        zsh = {
+          enable = true;
+          syntaxHighlighting.enable = true;
+        };
+      };
+    services = lib.genAttrs programNames (_: {
+      enable = true;
+    });
+  };
+
   render =
-    class: transparent: upstream: name: port:
+    class: transparent: upstream: name: port: supplied:
     let
       given = port.${class};
       body = if lib.isFunction given then given else given.config;
+      when = if lib.isFunction given then (_: true) else given.when or (_: true);
 
       args = {
-        inherit lib pkgs;
-        config = { };
         p = probe;
         cfg = {
           inherit transparent;
@@ -112,11 +141,21 @@ let
         flavor = "probe";
         accent = "probe";
         spec = { };
-        upstream = if upstream then "probe-upstream" else null;
+        inherit upstream;
+      }
+      // supplied
+      // {
+        inherit lib pkgs;
+        config = fakeConfig;
         port = name;
       };
+
+      tune = (args.spec.ports or { }).${name} or (_: data: data);
+      themed = lib.optionalAttrs (port ? theme) {
+        data = tune args (port.theme args);
+      };
     in
-    body (args // lib.optionalAttrs (port ? theme) { data = port.theme args; });
+    builtins.seq (when args) (body (args // themed));
 
   # `builtins.deepSeq` would descend into a derivation's self-referential
   # attributes and never come back, so derivations are forced to their drvPath
@@ -144,9 +183,17 @@ let
             lib.concatMap
               (
                 upstream:
-                lib.mapAttrsToList (render class transparent upstream) (
-                  lib.filterAttrs (_: port: port ? ${class}) ports
-                )
+                lib.mapAttrsToList (
+                  name: port:
+                  render class transparent (if upstream then "probe-upstream" else null) name port {
+                    accent = "probe";
+                    flavor = "probe";
+                    name = "probe";
+                    p = probe;
+                    spec = { };
+                    theme = "probe";
+                  }
+                ) (lib.filterAttrs (_: port: port ? ${class}) ports)
               )
               [
                 false
@@ -163,6 +210,66 @@ let
         "home"
         "nixos"
       ];
+
+  # Every real theme hook is rendered for every flavor and class. This catches
+  # raw/native palette assumptions and theme-specific port overrides which the
+  # sentinel probe deliberately cannot model.
+  themedRendered = lib.concatLists (
+    lib.mapAttrsToList (
+      themeName: spec:
+      lib.concatMap (
+        flavor:
+        let
+          accent = spec.defaultAccent;
+          p = palette.mkPalette spec { inherit flavor accent; };
+        in
+        lib.concatMap
+          (
+            class:
+            lib.concatMap
+              (
+                transparent:
+                lib.mapAttrsToList (
+                  name: port:
+                  let
+                    declared = (spec.integrations or { }).${name} or null;
+                    upstream = if declared == null then null else declared.name flavor;
+                    baseName = if upstream == null then palette.nameOf spec flavor else upstream;
+                    cfg = {
+                      inherit transparent;
+                      configFile = "tmux/probe.conf";
+                    };
+                    resolvedName = (port.resolveName or ({ name, ... }: name)) {
+                      name = baseName;
+                      inherit upstream cfg;
+                    };
+                  in
+                  render class transparent upstream name port {
+                    inherit
+                      accent
+                      cfg
+                      flavor
+                      p
+                      spec
+                      ;
+                    name = resolvedName;
+                    theme = themeName;
+                  }
+                ) (lib.filterAttrs (_: port: port ? ${class}) ports)
+              )
+              [
+                false
+                true
+              ]
+          )
+          [
+            "hjem"
+            "home"
+            "nixos"
+          ]
+      ) (palette.flavorsOf spec)
+    ) themes
+  );
   # The option trees, evaluated without hjem or home-manager underneath them.
   # Every port is left disabled, so the sinks below only have to exist — this
   # catches a clash between two ports' options, not a wrong option path.
@@ -180,6 +287,67 @@ let
     "services"
     "xdg"
   ] (_: sink);
+
+  evalSelector =
+    orchard:
+    (lib.evalModules {
+      class = "homeManager";
+      specialArgs = { inherit pkgs; };
+      modules = [
+        (engine.mkModule "home")
+        stub
+        { inherit orchard; }
+      ];
+    }).config.orchard;
+
+  defaultSelection = evalSelector {
+    enable = false;
+    theme = "catppuccin";
+  };
+
+  customSelection = evalSelector {
+    enable = false;
+    theme = "catppuccin";
+    accent = "blue";
+    btop.theme = "gruvbox";
+    helix = {
+      theme = "gruvbox";
+      transparent = true;
+    };
+    micro = {
+      theme = "gruvbox";
+      transparent = true;
+    };
+  };
+
+  unavailableUpstream = builtins.tryEval (
+    (evalSelector {
+      enable = false;
+      theme = "evergarden";
+      helix.source = "upstream";
+    }).helix.themeName
+  );
+
+  selectorFailures =
+    lib.optional (
+      defaultSelection.helix.resolvedSource != "builtin"
+    ) "default Catppuccin Helix should use its builtin"
+    ++ lib.optional (
+      customSelection.btop.themeName != "gruvbox_dark_v2"
+    ) "per-port theme selection did not resolve Gruvbox for btop"
+    ++ lib.optional (
+      customSelection.btop.resolvedSource != "builtin"
+    ) "per-port Gruvbox btop should use its builtin"
+    ++ lib.optional (
+      customSelection.helix.themeName != "gruvbox-transparent"
+    ) "transparent Helix builtin did not resolve its wrapper name"
+    ++ lib.optional (
+      customSelection.helix.resolvedSource != "builtin"
+    ) "transparent Helix should retain its capable builtin"
+    ++ lib.optional (
+      customSelection.micro.resolvedSource != "generated"
+    ) "transparent Micro should fall back to a generated theme"
+    ++ lib.optional unavailableUpstream.success "forcing a missing upstream integration should fail";
 
   # Every theme is worn in turn, with the ports left disabled so the stubs above
   # only have to exist. This proves the selector resolves each theme's default
@@ -222,10 +390,67 @@ let
       nixos = "nixos";
     }
   );
+
+  homePorts = lib.filterAttrs (_: port: port ? home) ports;
+
+  homeSmoke = homeManager.lib.homeManagerConfiguration {
+    inherit pkgs;
+    modules = [
+      (engine.mkModule "home")
+      {
+        home = {
+          username = "orchard";
+          homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/orchard" else "/home/orchard";
+          stateVersion = "26.05";
+        };
+
+        programs = {
+          bat.enable = true;
+          btop.enable = true;
+          eza.enable = true;
+          fish.enable = true;
+          fzf.enable = true;
+          git.enable = true;
+          helix.enable = true;
+          lazygit.enable = true;
+          micro.enable = true;
+          starship.enable = true;
+          tmux.enable = true;
+          wezterm.enable = true;
+          yazi.enable = true;
+          zellij.enable = true;
+          zsh = {
+            enable = true;
+            syntaxHighlighting.enable = true;
+          };
+        };
+
+        orchard = {
+          enable = true;
+          autoEnable = false;
+          theme = "catppuccin";
+          accent = "blue";
+        }
+        // lib.mapAttrs (_: _: { enable = true; }) homePorts;
+      }
+    ];
+  };
 in
 {
-  modules = pkgs.runCommandLocal "themes-modules" {
-    covered = toString (lib.unique resolved);
+  modules =
+    pkgs.runCommandLocal "themes-modules"
+      {
+        covered = toString (lib.unique resolved);
+      }
+      (
+        if selectorFailures == [ ] then
+          "touch $out"
+        else
+          "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" selectorFailures)} >&2; exit 1"
+      );
+
+  home-manager = pkgs.runCommandLocal "themes-home-manager" {
+    covered = builtins.unsafeDiscardStringContext homeSmoke.activationPackage.drvPath;
   } "touch $out";
 
   palettes = pkgs.runCommandLocal "themes-palettes" { } (
@@ -236,6 +461,8 @@ in
   );
 
   ports = pkgs.runCommandLocal "themes-ports" {
-    covered = builtins.seq (force rendered) (toString (lib.attrNames ports));
+    covered = builtins.seq (force rendered) (
+      builtins.seq (force themedRendered) (toString (lib.attrNames ports))
+    );
   } "touch $out";
 }
