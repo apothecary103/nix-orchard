@@ -6,9 +6,24 @@
     url = "github:nix-community/home-manager";
     inputs.nixpkgs.follows = "nixpkgs";
   };
+  inputs.hjem = {
+    url = "github:feel-co/hjem";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+  inputs.hjem-rum = {
+    url = "github:snugnug/hjem-rum";
+    inputs.nixpkgs.follows = "nixpkgs";
+    inputs.hjem.follows = "hjem";
+  };
 
   outputs =
-    { nixpkgs, home-manager, ... }:
+    {
+      nixpkgs,
+      home-manager,
+      hjem,
+      hjem-rum,
+      ...
+    }:
     let
       inherit (nixpkgs) lib;
 
@@ -50,6 +65,8 @@
         import ./tests {
           inherit lib engine;
           homeManager = home-manager;
+          inherit hjem;
+          hjemRum = hjem-rum;
           pkgs = nixpkgs.legacyPackages.${system};
         }
       );

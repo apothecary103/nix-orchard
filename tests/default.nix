@@ -3,6 +3,8 @@
   pkgs,
   engine,
   homeManager,
+  hjem,
+  hjemRum,
 }:
 
 let
@@ -474,6 +476,86 @@ let
       }
     ];
   };
+
+  hjemPorts = lib.filterAttrs (_: port: port ? hjem) ports;
+
+  # Pinned to Linux, not the host: gating on `isLinux` would no-op on darwin.
+  hjemSmoke = lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [
+      hjem.nixosModules.default
+      {
+        system.stateVersion = "26.05";
+
+        # The least NixOS' own assertions accept, so the list below stays ours.
+        boot.loader.grub.enable = false;
+        fileSystems."/" = {
+          device = "/dev/null";
+          fsType = "ext4";
+        };
+
+        users = {
+          groups.orchard = { };
+          users.orchard = {
+            isNormalUser = true;
+            group = "orchard";
+          };
+        };
+
+        hjem = {
+          extraModules = [
+            hjemRum.hjemModules.default
+            (engine.mkModule "hjem")
+          ];
+
+          users.orchard = {
+            enable = true;
+            directory = "/home/orchard";
+            user = "orchard";
+
+            # tofi is missing on purpose: hjem-rum's module misuses toKeyValue.
+            rum.programs = {
+              alacritty.enable = true;
+              fish.enable = true;
+              foot.enable = true;
+              fuzzel.enable = true;
+              fzf.enable = true;
+              ghostty.enable = true;
+              helix.enable = true;
+              imv.enable = true;
+              kitty.enable = true;
+              starship.enable = true;
+              yazi.enable = true;
+              zsh.enable = true;
+            };
+
+            orchard = {
+              enable = true;
+              autoEnable = false;
+              theme = "catppuccin";
+              accent = "blue";
+            }
+            // lib.mapAttrs (_: _: { enable = true; }) hjemPorts;
+          };
+        };
+      }
+    ];
+  };
+
+  # The hjem equivalent of an activation package, without the system closure.
+  hjemUser = hjemSmoke.config.hjem.users.orchard;
+
+  hjemFiles = lib.concatMap lib.attrValues [
+    hjemUser.files
+    hjemUser.xdg.cache.files
+    hjemUser.xdg.config.files
+    hjemUser.xdg.data.files
+    hjemUser.xdg.state.files
+  ];
+
+  hjemFailures = map (entry: entry.message) (
+    lib.filter (entry: !entry.assertion) hjemSmoke.config.assertions
+  );
 in
 {
   modules =
@@ -491,6 +573,18 @@ in
   home-manager = pkgs.runCommandLocal "themes-home-manager" {
     covered = builtins.unsafeDiscardStringContext homeSmoke.activationPackage.drvPath;
   } "touch $out";
+
+  hjem =
+    pkgs.runCommandLocal "themes-hjem"
+      {
+        covered = builtins.seq (force hjemFiles) (toString (map (file: file.target) hjemFiles));
+      }
+      (
+        if hjemFailures == [ ] then
+          "touch $out"
+        else
+          "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" hjemFailures)} >&2; exit 1"
+      );
 
   palettes = pkgs.runCommandLocal "themes-palettes" { } (
     if failures == [ ] then
