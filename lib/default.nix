@@ -6,10 +6,18 @@ let
 
   loadDir =
     dir:
-    lib.mapAttrs' (file: _: {
-      name = lib.removeSuffix ".nix" file;
-      value = import (dir + "/${file}") { inherit lib render; };
-    }) (lib.filterAttrs (file: kind: kind == "regular" || kind == "directory") (builtins.readDir dir));
+    lib.mapAttrs'
+      (file: _: {
+        name = lib.removeSuffix ".nix" file;
+        value = import (dir + "/${file}") { inherit lib render; };
+      })
+      (
+        lib.filterAttrs (
+          file: kind:
+          (kind == "regular" && lib.hasSuffix ".nix" file)
+          || (kind == "directory" && builtins.pathExists (dir + "/${file}/default.nix"))
+        ) (builtins.readDir dir)
+      );
 in
 rec {
   inherit render palette;
@@ -22,7 +30,7 @@ rec {
   ports = loadDir ../ports;
 
   # name -> theme spec, as consumed by palette.mkPalette.
-  themes = loadDir ../themes;
+  themes = lib.mapAttrs (name: theme: theme // { inherit name; }) (loadDir ../themes);
 
   mkPalette = theme: palette.mkPalette themes.${theme};
 

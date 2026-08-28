@@ -1,11 +1,11 @@
 { lib, render }:
 
 {
-  name = "ashen";
   description = "Embers on charcoal";
+  source = "https://codeberg.org/ficd/ashen.nvim";
 
   # One flavor, and a dark one — ashen has no light counterpart.
-  palettes.ashen = import ./palette.nix;
+  palettes.ashen = import ./palettes.nix;
 
   defaultFlavor = "ashen";
   lightFlavors = [ ];

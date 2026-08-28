@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "gruvbox-material";
   description = "gruvbox with the saturation taken off";
+  source = "https://github.com/sainnhe/gruvbox-material";
 
   palettes = import ./palettes.nix;
 

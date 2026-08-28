@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "onedark";
   description = "Atom's One, dark and light";
+  source = "https://github.com/joshdick/onedark.vim";
 
   palettes = import ./palettes.nix;
 

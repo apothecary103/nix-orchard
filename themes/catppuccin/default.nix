@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "catppuccin";
   description = "Soothing pastel theme";
+  source = "https://github.com/catppuccin/palette";
 
   palettes = import ./palettes.nix;
 

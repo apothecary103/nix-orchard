@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
   outputs =
-    { self, nixpkgs }:
+    { nixpkgs, ... }:
     let
       inherit (nixpkgs) lib;
 
@@ -24,8 +24,6 @@
     in
     {
       lib = engine;
-
-      inherit (engine) themes ports;
 
       # theme -> flavor -> the resolved palette, on that theme's default accent.
       palettes = lib.mapAttrs (

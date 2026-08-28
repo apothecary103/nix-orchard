@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "adwaita";
   description = "GNOME's palette, on GNOME's own surfaces";
+  source = "https://github.com/helix-editor/helix/tree/master/runtime/themes";
 
   palettes = import ./palettes.nix;
 

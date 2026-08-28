@@ -394,7 +394,7 @@ in
       type = lib.types.attrs;
       readOnly = true;
       default = lib.mapAttrs (_: t: {
-        inherit (t) description;
+        inherit (t) description source;
         flavors = palette.flavorsOf t;
         accents = palette.accentsOf t;
       }) themes;

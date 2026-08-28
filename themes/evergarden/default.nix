@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "evergarden";
   description = "Comfy & fancy, warm and green";
+  source = "https://codeberg.org/evergarden/nvim";
 
   palettes = import ./palettes.nix;
 

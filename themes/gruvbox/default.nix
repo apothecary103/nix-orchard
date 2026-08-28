@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "gruvbox";
   description = "Retro groove, warm and high contrast";
+  source = "https://github.com/morhetz/gruvbox";
 
   palettes = import ./palettes.nix;
 

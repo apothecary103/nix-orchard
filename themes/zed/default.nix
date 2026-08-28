@@ -1,8 +1,8 @@
 { lib, ... }:
 
 {
-  name = "zed";
   description = "Zed's One, dark and light";
+  source = "https://github.com/zed-industries/zed/blob/main/assets/themes/one/one.json";
 
   palettes = import ./palettes.nix;
 

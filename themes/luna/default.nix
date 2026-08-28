@@ -1,11 +1,11 @@
 { ... }:
 
 {
-  name = "luna";
   description = "A near-black theme lit by four muted hues";
+  source = "https://github.com/WTFox/luna.nvim";
 
   # One flavor, so the ports are named `luna` rather than `luna-<something>`.
-  palettes.luna = import ./palette.nix;
+  palettes.luna = import ./palettes.nix;
 
   defaultFlavor = "luna";
   lightFlavors = [ ];
