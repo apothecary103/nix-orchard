@@ -1,8 +1,9 @@
 { lib }:
 
 rec {
-  # The standard vocabulary. A theme has to spell all of these; a port may only
-  # ever name one of these or a role below, never a colour of its own.
+  # The legacy flat vocabulary from which the semantic namespaces are built. A
+  # theme has to spell all of these; ports consume the grouped contract emitted
+  # by mkPalette rather than these historical names directly.
   surfaces = [
     "crust"
     "mantle"

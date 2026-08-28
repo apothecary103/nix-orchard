@@ -36,7 +36,7 @@ let
       malformed != [ ]
     ) "${themeName}/${flavor}/${accent}: not #rrggbb: ${toString malformed}";
 
-  failures = lib.concatLists (
+  paletteFailures = lib.concatLists (
     lib.mapAttrsToList (
       themeName: theme:
       lib.concatMap (
@@ -44,6 +44,45 @@ let
       ) (palette.flavorsOf theme)
     ) themes
   );
+
+  themeFailures = lib.concatLists (
+    lib.mapAttrsToList (
+      themeName: theme:
+      let
+        flavors = palette.flavorsOf theme;
+        accents = palette.accentsOf theme;
+        integrations = theme.integrations or { };
+        unknownIntegrations = lib.filter (name: !(ports ? ${name}) || !(ports.${name} ? integration)) (
+          lib.attrNames integrations
+        );
+        invalidKinds = lib.filter (
+          name:
+          !(lib.elem integrations.${name}.kind [
+            "builtin"
+            "official"
+          ])
+        ) (lib.attrNames integrations);
+      in
+      lib.optional (!(lib.isString theme.source)) "${themeName}: source must be a string"
+      ++ lib.optional (
+        !(lib.elem theme.defaultFlavor flavors)
+      ) "${themeName}: default flavor ${theme.defaultFlavor} is not declared"
+      ++ lib.optional (
+        !(lib.elem theme.defaultAccent accents)
+      ) "${themeName}: default accent ${theme.defaultAccent} is not declared"
+      ++ lib.optional (
+        !(lib.all (flavor: lib.elem flavor flavors) (theme.lightFlavors or [ ]))
+      ) "${themeName}: lightFlavors contains an unknown flavor"
+      ++ lib.optional (
+        unknownIntegrations != [ ]
+      ) "${themeName}: integrations without capable ports: ${toString unknownIntegrations}"
+      ++ lib.optional (
+        invalidKinds != [ ]
+      ) "${themeName}: integrations with invalid kinds: ${toString invalidKinds}"
+    ) themes
+  );
+
+  failures = paletteFailures ++ themeFailures;
 
   # A port that names something outside the vocabulary breaks every theme at
   # once, so every class binding is rendered against a palette of sentinel
