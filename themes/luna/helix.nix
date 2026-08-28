@@ -6,7 +6,7 @@
 { p, lib }:
 
 let
-  raw = p.raw;
+  raw = p.native;
 
   italic = fg: {
     inherit fg;

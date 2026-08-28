@@ -4,7 +4,7 @@
 { p }:
 
 let
-  raw = p.raw;
+  raw = p.native;
   c = builtins.substring 1 6;
 in
 {

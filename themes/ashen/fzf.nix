@@ -4,7 +4,7 @@
 { p }:
 
 let
-  raw = p.raw;
+  raw = p.native;
 in
 {
   fg = raw.g_4;

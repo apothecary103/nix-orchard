@@ -1,9 +1,7 @@
 { lib }:
 
 rec {
-  # The legacy flat vocabulary from which the semantic namespaces are built. A
-  # theme has to spell all of these; ports consume the grouped contract emitted
-  # by mkPalette rather than these historical names directly.
+  # A theme has to spell all of these; ports read the grouped palette instead.
   surfaces = [
     "crust"
     "mantle"
@@ -84,23 +82,7 @@ rec {
     "statusDim"
   ];
 
-  # Catppuccin's vocabulary, so a hand-styled config written against it resolves
-  # under any theme. A theme that has its own value for one of these keeps it —
-  # these are only the fallbacks.
-  compat = c: {
-    mauve = c.purple;
-    lavender = c.blue;
-    sapphire = c.skye;
-    sky = c.skye;
-    peach = c.orange;
-    teal = c.aqua;
-    maroon = c.red;
-    rosewater = c.cherry;
-    flamingo = c.cherry;
-  };
-
-  # What every port actually reads. A theme overrides whichever of these its own
-  # design disagrees with; the rest fall out of the twelve hues.
+  # Defaults a theme may override; the rest fall out of the twelve hues.
   roles = c: {
     cursor = c.accent;
     selection = c.surface1;
@@ -188,8 +170,6 @@ rec {
   nameOf =
     theme: flavor: if lib.length (flavorsOf theme) > 1 then "${theme.name}-${flavor}" else theme.name;
 
-  # Layered as a fixed point so a theme's own roles can name each other and the
-  # derived defaults alike, in any order.
   mkPalette =
     theme:
     { flavor, accent }:
@@ -197,19 +177,19 @@ rec {
       raw = theme.palettes.${flavor};
       isLight = lib.elem flavor (theme.lightFlavors or [ ]);
 
-      own = theme.colours { inherit raw isLight flavor; };
-      colours = compat own // own // { inherit isLight raw; };
+      colours = theme.colours { inherit raw isLight flavor; } // {
+        inherit isLight raw;
+      };
 
-      named = theme.accents.${accent};
-      accentColour = if lib.hasPrefix "#" named then named else colours.${named};
-    in
-    let
+      chosen = theme.accents.${accent};
+      accentColour = if lib.hasPrefix "#" chosen then chosen else colours.${chosen};
+
+      # One fixed point, so any of these can name any other in any order.
       flat = lib.fix (
         self: colours // roles self // (theme.roles or (_: { })) self // { accent = accentColour; }
       );
     in
-    flat
-    // {
+    {
       surface = {
         shadow = flat.crust;
         panel = flat.mantle;
@@ -245,17 +225,14 @@ rec {
       decorative.rainbow = flat.rainbow;
       terminal.ansi = flat.ansi;
 
-      # Flat string table for formats such as Helix, Starship and vivid which
-      # resolve styles by a palette key. Unlike the legacy root, it contains no
-      # theme-native or compatibility-only names.
+      # For helix, starship and vivid, which resolve styles by key not by value.
       named = lib.getAttrs (
         surfaces ++ hues ++ syntaxRoles ++ uiRoles ++ statusRoles ++ statusBarRoles
       ) flat;
 
-      # `native` is the theme's own vocabulary. `raw` and the flat palette are
-      # retained as compatibility aliases while ports move to the semantic
-      # namespaces above.
+      # The theme's own vocabulary, where a colour has no portable name.
       native = raw;
-      compat.catppuccin = compat flat;
+
+      inherit isLight;
     };
 }

@@ -10,15 +10,14 @@
 let
   inherit (engine) palette themes ports;
 
-  # Every name a port is allowed to reach for. A theme that misses one of these
-  # would only fail once some unrelated program was enabled, so it is checked
-  # here instead.
+  # A theme missing one of these would only fail once some program was enabled.
   required =
     palette.surfaces
     ++ palette.hues
-    ++ lib.attrNames (palette.compat (lib.genAttrs palette.hues (_: "#000000")))
-    ++ lib.attrNames (palette.roles (lib.genAttrs (palette.surfaces ++ palette.hues) (_: "#000000")))
-    ++ [ "accent" ];
+    ++ palette.syntaxRoles
+    ++ palette.uiRoles
+    ++ palette.statusRoles
+    ++ palette.statusBarRoles;
 
   hex = lib.match "#[0-9a-fA-F]{6}";
 
@@ -27,16 +26,25 @@ let
     let
       p = palette.mkPalette theme { inherit flavor accent; };
 
-      missing = lib.filter (name: !(p ? ${name})) required;
+      missing = lib.filter (name: !(p.named ? ${name})) required;
 
-      malformed = lib.filter (name: lib.isString p.${name} && hex p.${name} == null) (
-        lib.filter (name: p ? ${name}) required
-      );
+      # The colours `named` cannot carry: positions rather than names.
+      loose = [ p.ui.accent ] ++ p.decorative.rainbow ++ p.terminal.ansi;
+
+      malformed =
+        lib.filter (name: hex p.named.${name} == null) (lib.filter (name: p.named ? ${name}) required)
+        ++ lib.filter (colour: hex colour == null) loose;
     in
     lib.optional (missing != [ ]) "${themeName}/${flavor}/${accent}: missing ${toString missing}"
     ++ lib.optional (
       malformed != [ ]
-    ) "${themeName}/${flavor}/${accent}: not #rrggbb: ${toString malformed}";
+    ) "${themeName}/${flavor}/${accent}: not #rrggbb: ${toString malformed}"
+    ++ lib.optional (
+      lib.length p.decorative.rainbow != 6
+    ) "${themeName}/${flavor}/${accent}: rainbow is not 6 colours"
+    ++ lib.optional (
+      lib.length p.terminal.ansi != 16
+    ) "${themeName}/${flavor}/${accent}: ansi is not 16 colours";
 
   paletteFailures = lib.concatLists (
     lib.mapAttrsToList (
@@ -92,12 +100,9 @@ let
   # has no option tree to read defaults out of.
   probeValue = "#abcdef";
 
-  probe = lib.genAttrs required (_: probeValue) // {
+  probe = {
     isLight = false;
-    raw = { };
     native = { };
-    rainbow = lib.genList (_: probeValue) 6;
-    ansi = lib.genList (_: probeValue) 16;
 
     surface = lib.genAttrs [
       "shadow"

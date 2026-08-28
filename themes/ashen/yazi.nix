@@ -9,7 +9,7 @@
 }:
 
 let
-  raw = p.raw;
+  raw = p.native;
 in
 removeAttrs data [ "icon" ]
 // {
