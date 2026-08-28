@@ -57,7 +57,7 @@ in
     config =
       { data, ... }:
       {
-        rum.programs.foot.settings = lib.mapAttrs (_: lib.mapAttrs (_: lib.mkDefault)) data;
+        rum.programs.foot.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 
@@ -67,7 +67,7 @@ in
     config =
       { data, ... }:
       {
-        programs.foot.settings = lib.mapAttrs (_: lib.mapAttrs (_: lib.mkDefault)) data;
+        programs.foot.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 }

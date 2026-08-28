@@ -47,8 +47,8 @@ in
     }:
     {
       environment.sessionVariables = {
-        BAT_THEME = name;
-        BAT_CACHE_PATH = lib.mkIf (upstream == null) "${cache { inherit pkgs data name; }}";
+        BAT_THEME = lib.mkDefault name;
+        BAT_CACHE_PATH = lib.mkIf (upstream == null) (lib.mkDefault "${cache { inherit pkgs data name; }}");
       };
     };
 

@@ -52,7 +52,7 @@ in
     config =
       { data, ... }:
       {
-        rum.programs.kitty.settings = lib.mapAttrs (_: lib.mkDefault) data;
+        rum.programs.kitty.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 
@@ -62,7 +62,7 @@ in
     config =
       { data, ... }:
       {
-        programs.kitty.settings = lib.mapAttrs (_: lib.mkDefault) data;
+        programs.kitty.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 }

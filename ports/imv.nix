@@ -1,4 +1,4 @@
-{ render, ... }:
+{ lib, render }:
 
 let
   # catppuccin/imv. imv takes bare RRGGBB, and the overlay sits on the crust so
@@ -16,11 +16,19 @@ in
 
   hjem = {
     when = { config, ... }: config.rum.programs.imv.enable;
-    config = { data, ... }: { rum.programs.imv.settings.options = data; };
+    config =
+      { data, ... }:
+      {
+        rum.programs.imv.settings.options = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 
   home = {
     when = { config, ... }: config.programs.imv.enable;
-    config = { data, ... }: { programs.imv.settings.options = data; };
+    config =
+      { data, ... }:
+      {
+        programs.imv.settings.options = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

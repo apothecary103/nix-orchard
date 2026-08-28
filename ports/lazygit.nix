@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 let
   # catppuccin/lazygit, including the author colour, which is the one thing that
@@ -34,6 +34,10 @@ in
 
   home = {
     when = { config, ... }: config.programs.lazygit.enable;
-    config = { data, ... }: { programs.lazygit.settings = data; };
+    config =
+      { data, ... }:
+      {
+        programs.lazygit.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

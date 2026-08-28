@@ -1,4 +1,4 @@
-{ render, ... }:
+{ lib, render }:
 
 let
   # catppuccin/delta. The added and removed blocks are the hue mixed into the
@@ -86,7 +86,7 @@ in
     config =
       { data, ... }:
       {
-        rum.programs.git.settings.delta = data;
+        rum.programs.git.settings.delta = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 
@@ -96,7 +96,7 @@ in
     config =
       { data, ... }:
       {
-        programs.delta.options = data;
+        programs.delta.options = lib.mapAttrsRecursive (_: lib.mkDefault) data;
       };
   };
 }

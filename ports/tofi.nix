@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 let
   # catppuccin/tofi is four lines; the rest below are tofi's own defaults spelled
@@ -24,11 +24,19 @@ in
 
   hjem = {
     when = { config, ... }: config.rum.programs.tofi.enable;
-    config = { data, ... }: { rum.programs.tofi.settings = data; };
+    config =
+      { data, ... }:
+      {
+        rum.programs.tofi.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 
   home = {
     when = { config, ... }: config.programs.tofi.enable;
-    config = { data, ... }: { programs.tofi.settings = data; };
+    config =
+      { data, ... }:
+      {
+        programs.tofi.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

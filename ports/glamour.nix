@@ -164,7 +164,7 @@ in
       ...
     }:
     {
-      environment.sessionVariables.GLAMOUR_STYLE = "${(pkgs.formats.json { }).generate
+      environment.sessionVariables.GLAMOUR_STYLE = lib.mkDefault "${(pkgs.formats.json { }).generate
         "${name}-glamour.json"
         data
       }";
@@ -178,7 +178,8 @@ in
       ...
     }:
     {
-      home.sessionVariables.GLAMOUR_STYLE = "${(pkgs.formats.json { }).generate "${name}-glamour.json"
+      home.sessionVariables.GLAMOUR_STYLE = lib.mkDefault "${(pkgs.formats.json { }).generate
+        "${name}-glamour.json"
         data
       }";
     };

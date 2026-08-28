@@ -93,11 +93,19 @@ in
 
   hjem = {
     when = { config, ... }: config.rum.programs.alacritty.enable;
-    config = { data, ... }: { rum.programs.alacritty.settings.colors = data; };
+    config =
+      { data, ... }:
+      {
+        rum.programs.alacritty.settings.colors = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 
   home = {
     when = { config, ... }: config.programs.alacritty.enable;
-    config = { data, ... }: { programs.alacritty.settings.colors = data; };
+    config =
+      { data, ... }:
+      {
+        programs.alacritty.settings.colors = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

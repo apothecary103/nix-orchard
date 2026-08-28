@@ -1,4 +1,4 @@
-{ render, ... }:
+{ lib, render }:
 
 let
   # catppuccin/zathura. The two highlight colours are translucent so the text
@@ -64,6 +64,10 @@ in
 
   home = {
     when = { config, ... }: config.programs.zathura.enable;
-    config = { data, ... }: { programs.zathura.options = data; };
+    config =
+      { data, ... }:
+      {
+        programs.zathura.options = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

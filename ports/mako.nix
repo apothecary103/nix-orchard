@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 let
   # catppuccin/mako, which colours the border by urgency and leaves the rest of
@@ -21,6 +21,10 @@ in
 
   home = {
     when = { config, ... }: config.services.mako.enable;
-    config = { data, ... }: { services.mako.settings = data; };
+    config =
+      { data, ... }:
+      {
+        services.mako.settings = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }

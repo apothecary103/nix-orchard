@@ -50,7 +50,7 @@ in
       colours = lib.concatStringsSep "," (lib.mapAttrsToList (slot: colour: "${slot}:${colour}") data);
     in
     {
-      environment.sessionVariables.FZF_DEFAULT_OPTS_FILE = "${pkgs.writeText "${name}-fzf.rc" ''
+      environment.sessionVariables.FZF_DEFAULT_OPTS_FILE = lib.mkDefault "${pkgs.writeText "${name}-fzf.rc" ''
         --color=${colours}
       ''}";
     };

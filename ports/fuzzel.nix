@@ -1,4 +1,4 @@
-{ render, ... }:
+{ lib, render }:
 
 let
   # catppuccin/fuzzel. Everything is opaque except the background, which sits at
@@ -29,11 +29,19 @@ in
 
   hjem = {
     when = { config, ... }: config.rum.programs.fuzzel.enable;
-    config = { data, ... }: { rum.programs.fuzzel.settings.colors = data; };
+    config =
+      { data, ... }:
+      {
+        rum.programs.fuzzel.settings.colors = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 
   home = {
     when = { config, ... }: config.programs.fuzzel.enable;
-    config = { data, ... }: { programs.fuzzel.settings.colors = data; };
+    config =
+      { data, ... }:
+      {
+        programs.fuzzel.settings.colors = lib.mapAttrsRecursive (_: lib.mkDefault) data;
+      };
   };
 }
