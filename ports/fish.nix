@@ -1,9 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/fish. Commands are blue, parameters the soft warm tint, keywords
-  # the keyword hue and everything quoted green; the pager follows the same
-  # grammar one step dimmer.
+  # catppuccin/fish.
   theme =
     p:
     let
@@ -39,10 +37,7 @@ let
       fish_pager_color_description = c p.surface.neutral3;
     };
 
-  # A theme file alone would only take effect once `fish_config theme choose`
-  # ran, and that writes universal variables which then shadow everything set
-  # from a config file. The file is for previewing; the globals are what
-  # actually apply.
+  # The file only previews: `fish_config theme choose` writes universals that win.
   emit = sep: data: lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "${sep}${k} ${v}") data);
 in
 {

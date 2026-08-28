@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/zsh-syntax-highlighting, which is greener than most ports: every
-  # runnable word is the string hue, options are orange, and only the separators
-  # and unclosed quotes go red.
+  # catppuccin/zsh-syntax-highlighting.
   theme =
     p:
     let

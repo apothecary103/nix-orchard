@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/zathura. The two highlight colours are translucent so the text
-  # under a search hit stays readable, which a solid fill destroys.
+  # catppuccin/zathura; the highlights are translucent so hit text stays readable.
   theme =
     p:
     let
@@ -56,8 +55,7 @@ let
     };
 in
 {
-  # No hjem binding: zathura reads a single zathurarc, so a theme file of its
-  # own would clobber the user's.
+  # No hjem binding: zathura reads a single zathurarc, so a file would clobber it.
   description = "zathura";
 
   theme = { p, ... }: theme p;

@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/ghostty. The selection background is the overlay a fifth of the
-  # way into the base; everything else is a straight palette entry.
+  # catppuccin/ghostty; selection is the overlay a fifth into the base.
   theme = p: {
     palette = lib.imap0 (i: colour: "${toString i}=${colour}") p.terminal.ansi;
 

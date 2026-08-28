@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/fzf, which is deliberately small: the prompt and info share one
-  # hue, the highlights another, and the background steps come from the palette
-  # rather than being left to the terminal.
+  # catppuccin/fzf.
   theme =
     { p, transparent }:
     {

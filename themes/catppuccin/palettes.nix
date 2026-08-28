@@ -1,5 +1,4 @@
-# Generated from github:catppuccin/palette (palette.json). Regenerate by
-# re-running that JSON through the same key order; do not hand-edit.
+# Generated from catppuccin/palette's palette.json; do not hand-edit.
 {
   latte = {
     rosewater = "#dc8a78";

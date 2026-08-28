@@ -1,8 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/mako, which colours the border by urgency and leaves the rest of
-  # the notification alone.
+  # catppuccin/mako, which colours the border by urgency and nothing else.
   theme = p: {
     background-color = p.surface.background;
     text-color = p.surface.text;
@@ -13,8 +12,7 @@ let
   };
 in
 {
-  # No hjem binding: mako reads a single `mako/config`, so a theme file of its
-  # own would clobber the user's.
+  # No hjem binding: mako reads a single config, so a file would clobber it.
   description = "mako";
 
   theme = { p, ... }: theme p;

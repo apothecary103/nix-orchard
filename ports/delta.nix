@@ -1,9 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/delta. The added and removed blocks are the hue mixed into the
-  # background at 20%, with the emphasised words at 35% — flat surfaces there
-  # swamp the syntax highlighting underneath.
+  # catppuccin/delta: blocks are the hue at 20% over the background, words at 35%.
   theme =
     { p, name }:
     let
@@ -15,8 +13,6 @@ let
         } amount;
     in
     {
-      # Should match the name of the bat theme, since delta resolves syntax
-      # highlighting through syntect the same way bat does.
       syntax-theme = name;
 
       ${if p.isLight then "light" else "dark"} = true;
@@ -56,8 +52,7 @@ in
 
   program = "delta";
 
-  # delta highlights through syntect exactly as bat does, so its syntax-theme
-  # has to be whatever name bat resolved to — built-in or generated.
+  # delta uses syntect as bat does, so syntax-theme is whatever bat resolved to.
   theme =
     {
       p,
@@ -73,10 +68,7 @@ in
     in
     theme {
       inherit p;
-      # Delta and bat share syntect's bundled themes, but Delta cannot load an
-      # arbitrary Orchard theme file directly. ANSI is the honest generated
-      # fallback: it follows the terminal palette instead of naming an asset
-      # that Delta cannot resolve.
+      # delta cannot load an Orchard theme file, so ansi is the honest fallback.
       name = if known != null then known else "ansi";
     };
 

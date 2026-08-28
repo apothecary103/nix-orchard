@@ -21,8 +21,7 @@
 
   defaultAccent = "blue";
 
-  # helix ships both, contributed rather than derived. Nothing else does: One
-  # Dark elsewhere is Atom's, which is `themes/onedark`.
+  # Only helix ships these; One Dark elsewhere is Atom's, in `themes/onedark`.
   integrations = {
     helix = {
       kind = "builtin";
@@ -30,14 +29,12 @@
     };
   };
 
-  # `mantle` sits *above* `base`, as in luna: Zed's chrome gets lighter as it
-  # moves outward from the buffer, so the panels and the statusline that would
-  # normally be a step down are a step up instead. `crust` is the one borrowed
-  # value — see palettes.nix.
+  # `mantle` sits above `base`: Zed's chrome gets lighter away from the buffer.
   colours =
     { raw, isLight, ... }:
     raw
     // {
+      # Neither flavor goes below the editor, so dark borrows onedark.vim's step.
       crust = if isLight then raw.border else "#21252b";
       mantle = raw.surface;
       base = raw.editor_background;
@@ -65,11 +62,7 @@
       cherry = raw.punctuation_special;
     };
 
-  # Zed's own syntax map, which reads a shade quieter than Atom's: the same
-  # purple keywords and green strings, but types and operators go to the one
-  # cyan, constants to a sand yellow, and everything structural — variables,
-  # namespaces, punctuation — is left at the editor's own foreground rather than
-  # being given a hue of its own.
+  # Zed's syntax map, a shade quieter than Atom's; structure stays at foreground.
   roles = p: {
     selection = p.raw.border_selected;
     cursorline = p.mantle;
@@ -97,8 +90,7 @@
     hint = p.raw.hint;
     ok = p.raw.success;
 
-    # Zed keeps its diff colours apart from its status ones, and they are the
-    # brighter Atom pair rather than the muted `created`/`deleted`.
+    # Zed's diff pair is the brighter Atom one, not the muted `created`/`deleted`.
     add = p.raw.diff_plus;
     delete = p.raw.diff_minus;
     change = p.raw.warning;
@@ -107,8 +99,7 @@
     match = p.raw.search_active;
     title = p.raw.property;
 
-    # `status_bar.background`, which is the workspace colour rather than a
-    # darker step — the statusline sits outside the buffer, so it goes lighter.
+    # `status_bar.background`: outside the buffer, so it goes lighter not darker.
     statusBg = p.surface2;
     statusFg = p.text;
     statusDim = p.subtext0;

@@ -1,6 +1,4 @@
-# ashen/fish, verbatim. Commands are blaze-bold, the cwd orange rather than the
-# accent, and the autosuggestion sits on brown — none of which falls out of a
-# generic mapping.
+# ashen/fish, verbatim: the cwd is orange rather than the accent.
 { p }:
 
 let

@@ -1,10 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/tmux is a plugin that only exports `@thm_*` variables and leaves
-  # the styling to it. Both halves are here: the variables, so a hand-written
-  # status line can name colours the same way, and the styles, so tmux looks
-  # themed without one.
+  # Both halves of catppuccin/tmux: the `@thm_*` variables and the styles.
   theme = p: {
     variables = {
       thm_bg = p.surface.background;
@@ -37,8 +34,7 @@ let
       thm_crust = p.surface.shadow;
     };
 
-    # Styles only, no status-left/right content, so this composes with whatever
-    # status line you already have. Later config wins.
+    # No status-left/right content, so this composes with your own status line.
     styles = {
       mode-style = "fg=${p.surface.background},bg=${p.ui.accent}";
       message-style = "fg=${p.surface.text},bg=${p.surface.neutral0}";

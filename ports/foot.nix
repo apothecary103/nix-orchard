@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/foot. foot takes bare RRGGBB, and its selection background is the
-  # overlay mixed a third of the way into the base rather than a palette step.
+  # catppuccin/foot, which takes bare RRGGBB; selection is overlay a third into base.
   theme =
     p:
     let

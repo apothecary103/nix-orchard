@@ -1,6 +1,4 @@
-# The palette helix's `adwaita-dark`/`adwaita-light` carry, which is GNOME's
-# with the extra steps libadwaita and GNOME Builder actually use — the teals and
-# violets the HIG page omits, and the real window and popup surfaces.
+# helix's adwaita themes: GNOME's palette plus the steps the HIG page omits.
 let
   hues = {
     blue_1 = "#99C1F1";

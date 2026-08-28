@@ -56,8 +56,7 @@ let
 
 in
 {
-  # wezterm loads every scheme it finds under `color_schemes_dirs`; the config
-  # still has to name one, which stays the caller's job.
+  # wezterm loads every scheme it finds, but naming one is the caller's job.
   description = "wezterm";
 
   program = "wezterm";

@@ -94,10 +94,7 @@ let
 
   failures = paletteFailures ++ themeFailures;
 
-  # A port that names something outside the vocabulary breaks every theme at
-  # once, so every class binding is rendered against a palette of sentinel
-  # values. `cfg` carries the union of the ports' extra options, since a probe
-  # has no option tree to read defaults out of.
+  # A port naming something outside the vocabulary breaks every theme at once.
   probeValue = "#abcdef";
 
   probe = {
@@ -203,9 +200,7 @@ let
     in
     builtins.seq (when args) (body (args // themed));
 
-  # `builtins.deepSeq` would descend into a derivation's self-referential
-  # attributes and never come back, so derivations are forced to their drvPath
-  # and left alone.
+  # `deepSeq` never returns from a derivation's self-referential attributes.
   force =
     v:
     if lib.isDerivation v then
@@ -257,9 +252,7 @@ let
         "nixos"
       ];
 
-  # Every real theme hook is rendered for every flavor and class. This catches
-  # raw/native palette assumptions and theme-specific port overrides which the
-  # sentinel probe deliberately cannot model.
+  # Catches `native` assumptions and theme hooks, which the probe cannot model.
   themedRendered = lib.concatLists (
     lib.mapAttrsToList (
       themeName: spec:
@@ -316,9 +309,7 @@ let
       ) (palette.flavorsOf spec)
     ) themes
   );
-  # The option trees, evaluated without hjem or home-manager underneath them.
-  # Every port is left disabled, so the sinks below only have to exist — this
-  # catches a clash between two ports' options, not a wrong option path.
+  # Catches a clash between two ports' options, not a wrong option path.
   sink = lib.mkOption {
     type = lib.types.attrs;
     default = { };
@@ -395,9 +386,7 @@ let
     ) "transparent Micro should fall back to a generated theme"
     ++ lib.optional unavailableUpstream.success "forcing a missing upstream integration should fail";
 
-  # Every theme is worn in turn, with the ports left disabled so the stubs above
-  # only have to exist. This proves the selector resolves each theme's default
-  # flavor and accent, and that the option tree merges.
+  # Proves every theme's default flavor and accent resolve and the tree merges.
   optionTree =
     class: moduleClass: theme:
     (lib.evalModules {
@@ -415,8 +404,7 @@ let
       ];
     }).options;
 
-  # Forcing the tree wholesale would walk into `_module` and never come back, so
-  # only the leaves worth proving are read: every port's resolved theme name.
+  # Forcing the whole tree would walk into `_module` and never come back.
   names =
     class: moduleClass:
     lib.concatMap (

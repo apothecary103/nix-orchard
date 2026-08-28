@@ -39,9 +39,7 @@
 
   colours = { raw, ... }: raw;
 
-  # gruvbox-material's "material" highlight set: it keeps gruvbox's shape but
-  # pushes functions to green-bold, types to yellow and constants to purple,
-  # with aqua doing the work orange does in the original.
+  # The material highlight set: gruvbox's shape, with aqua doing orange's work.
   roles = p: {
     comment = p.overlay1;
 

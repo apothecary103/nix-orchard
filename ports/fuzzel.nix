@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/fuzzel. Everything is opaque except the background, which sits at
-  # dd so the launcher reads as a panel rather than a window.
+  # catppuccin/fuzzel; the background sits at dd so it reads as a panel.
   theme =
     p:
     let

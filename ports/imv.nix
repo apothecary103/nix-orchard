@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/imv. imv takes bare RRGGBB, and the overlay sits on the crust so
-  # it stays legible over a bright image.
+  # catppuccin/imv, which takes bare RRGGBB; the overlay sits on crust.
   theme = p: {
     background = render.noHash p.surface.background;
     overlay_text_color = render.noHash p.surface.text;

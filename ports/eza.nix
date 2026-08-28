@@ -1,9 +1,7 @@
 { ... }:
 
 let
-  # catppuccin/eza. Directories take the accent, the permission triple is
-  # red/yellow/green with the user row bold, and the size ramp climbs
-  # subtext -> blue -> purple as the numbers grow.
+  # catppuccin/eza.
   theme =
     p:
     let

@@ -1,8 +1,4 @@
-# evergarden for helix, written against evergarden.nvim's own treesitter groups
-# rather than derived from the palette: keywords red and italic, functions
-# green, strings lime, types yellow, and the two cherry slots — attributes and
-# macros — that give it its warmth. Scope names follow helix's list; the palette
-# table comes from the port.
+# evergarden for helix, against evergarden.nvim's own treesitter groups.
 { p, lib }:
 
 let
@@ -24,7 +20,6 @@ let
   };
 in
 {
-  # Syntax
   "comment" = italic "overlay2";
   "comment.block.documentation" = italic "overlay2";
 
@@ -77,14 +72,12 @@ in
   "tag" = "property";
   "tag.builtin" = "property";
 
-  # evergarden puts brackets and delimiters on the dimmest syntax step it has,
-  # which is what keeps dense code legible.
+  # Brackets and delimiters sit on the dimmest syntax step upstream has.
   "punctuation" = "punctuation";
   "punctuation.bracket" = "punctuation";
   "punctuation.delimiter" = "punctuation";
   "punctuation.special" = "special";
 
-  # Markup
   "markup.heading" = bold "title";
   "markup.heading.1" = bold "rainbow0";
   "markup.heading.2" = bold "rainbow1";
@@ -114,7 +107,6 @@ in
   "diff.minus" = "delete";
   "diff.delta" = "change";
 
-  # Interface
   "ui.linenr".fg = "surface2";
   "ui.linenr.selected".fg = "overlay2";
 
@@ -182,8 +174,7 @@ in
   "ui.virtual.whitespace" = "surface2";
   "ui.virtual.wrap" = "surface2";
 
-  # `incsearch` is orange in evergarden.nvim and `search` snow, which is what
-  # the jump labels and the match highlight follow here.
+  # `incsearch` is orange upstream and `search` snow; the jump labels follow.
   "ui.virtual.jump-label" = bold "match";
   "ui.cursor.match" = bold "match";
 

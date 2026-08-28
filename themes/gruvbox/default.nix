@@ -25,10 +25,7 @@
 
   defaultAccent = "aqua";
 
-  # The contrast variants are only a background, so the programs that paint no
-  # background — bat — collapse them, and the ones that do keep them apart.
-  # btop's `gruvbox_dark` is the hard contrast and its `_v2` the medium one,
-  # which is the opposite of what the names suggest.
+  # btop's `gruvbox_dark` is the hard contrast and `_v2` the medium one.
   integrations = {
     helix = {
       kind = "builtin";
@@ -71,7 +68,6 @@
       name = flavor: if lib.hasPrefix "light" flavor then null else "gruvbox-tc";
     };
 
-    # vivid names all six exactly as orchard does.
     vivid = {
       kind = "builtin";
       name = flavor: "gruvbox-${flavor}";
@@ -85,9 +81,7 @@
 
   colours = { raw, ... }: raw;
 
-  # gruvbox.vim's own highlight groups: functions and headings are green-bold,
-  # types yellow, keywords red, strings green, constants purple, and the whole
-  # scheme leans on orange for anything the eye should catch second.
+  # gruvbox.vim's own highlight groups, which lean on orange for second glances.
   roles = p: {
     comment = p.overlay1;
 
@@ -130,8 +124,7 @@
       p.blue
     ];
 
-    # gruvbox's terminal mapping: the neutral hues take the normal slots and the
-    # bright ones the bright slots, which the light flavors invert.
+    # Neutral hues take the normal slots and bright the bright; light inverts it.
     ansi =
       let
         neutral = {

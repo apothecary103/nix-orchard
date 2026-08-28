@@ -1,8 +1,4 @@
-# morhetz/gruvbox, verbatim. The dark flavors take the `bright` hues and the
-# light ones the `faded` hues, which is what gruvbox.vim itself does.
-#
-# `crust` is the one value gruvbox does not ship: it stops at dark0_hard, so the
-# step below it is borrowed from gruvbox-material's `bg_dim`.
+# morhetz/gruvbox, verbatim; `crust` is borrowed from gruvbox-material's `bg_dim`.
 let
   dark = {
     crust = "#1b1b1b";

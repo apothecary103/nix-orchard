@@ -123,9 +123,7 @@ rec {
     title = c.cherry;
     secondaryAccent = c.blue;
 
-    # Status bars are the one piece of chrome every project decides for itself
-    # rather than deriving, so they get roles of their own instead of being
-    # spelled out of the ramp at each port.
+    # Every project picks its status bar rather than deriving it, so it gets roles.
     statusBg = c.mantle;
     statusFg = c.subtext1;
     statusDim = c.overlay1;
@@ -139,8 +137,7 @@ rec {
       c.blue
     ];
 
-    # Slots 0, 7, 8 and 15 are the grey ramp, so which end counts as "black"
-    # flips on a light flavor.
+    # Slots 0, 7, 8 and 15 are the grey ramp, so "black" flips on a light flavor.
     ansi = [
       (if c.isLight then c.subtext1 else c.surface1)
       c.red
@@ -165,8 +162,7 @@ rec {
 
   accentsOf = theme: lib.attrNames theme.accents;
 
-  # A single-flavor theme is named after itself; anything else carries the
-  # flavor, because the two end up side by side in a themes directory.
+  # Flavors end up side by side in a themes directory, so only they need suffixing.
   nameOf =
     theme: flavor: if lib.length (flavorsOf theme) > 1 then "${theme.name}-${flavor}" else theme.name;
 

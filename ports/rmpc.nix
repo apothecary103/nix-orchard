@@ -1,8 +1,7 @@
 { render, ... }:
 
 let
-  # Colours only: every field left out keeps rmpc's own default, so a layout or
-  # header defined elsewhere survives.
+  # Colours only, so a layout or header defined elsewhere survives.
   theme =
     p:
     let
@@ -49,8 +48,7 @@ let
 
 in
 {
-  # Only the theme file: rmpc takes config.ron as one opaque blob, so selecting
-  # the theme stays the caller's job.
+  # rmpc takes config.ron as one blob, so selecting the theme is the caller's job.
   description = "rmpc";
 
   program = "rmpc";

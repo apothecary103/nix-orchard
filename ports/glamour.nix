@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/glamour. Headings are blocked out with ▓ runs rather than #
-  # prefixes, code sits on the mantle, and chroma follows the same grammar the
-  # editor ports do.
+  # catppuccin/glamour.
   theme =
     p:
     let
@@ -148,8 +146,7 @@ let
     };
 in
 {
-  # glow, gh and the other charm tools read this through $GLAMOUR_STYLE rather
-  # than a module of their own, so there is no program to hang the port off.
+  # The charm tools read $GLAMOUR_STYLE, so there is no program to hang this off.
   description = "glamour, the charm markdown renderer";
 
   program = "glow";

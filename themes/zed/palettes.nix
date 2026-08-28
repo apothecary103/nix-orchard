@@ -1,20 +1,7 @@
-# zed-industries/zed, `assets/themes/one/one.json` — the One family Zed ships
-# and maintains itself. It descends from Atom's One (see `themes/onedark`) but
-# is not a copy of it: the chrome is a wholly different ramp and every hue has
-# been pulled down a step, so the two sit side by side rather than one being a
-# flavor of the other. The names below are Zed's own, flattened from its dotted
-# keys.
-#
-# The one value neither flavor publishes is a surface below the editor: Zed's
-# chrome gets *lighter* as it moves outward from the buffer, so One Dark's
-# darkest colour is the editor background itself. `crust` therefore borrows
-# `#21252b` from joshdick/onedark.vim, the ancestor whose sixteen ANSI slots
-# One Dark still reproduces verbatim. One Light needs no such loan — its border
-# is the deepest piece of chrome it has.
+# zed-industries/zed, `assets/themes/one/one.json`, flattened from its dotted keys.
 {
   dark = {
-    # Chrome. `background` is the workspace, `surface` the panels and tab bar,
-    # `editor_background` the buffer — and it is the darkest of the three.
+    # `background` is the workspace, `surface` the panels, `editor_background` the buffer.
     background = "#3b414d"; # also status_bar, title_bar
     surface = "#2f343e"; # also panel, tab_bar, elevated_surface, active_line
     element = "#2e343e"; # also title_bar.inactive
@@ -34,7 +21,6 @@
     text_muted = "#a9afbc";
     text_placeholder = "#878a98"; # also text.disabled, hidden, ignored
 
-    # Syntax.
     comment = "#5d636f";
     comment_doc = "#878e98"; # also string.escape
     primary = "#acb2be"; # editor text, punctuation, variable
@@ -52,7 +38,6 @@
     punctuation_special = "#b1574b";
     dark_red = "#be5046"; # the second of Zed's eight player colours
 
-    # Status.
     error = "#d07277"; # also deleted
     warning = "#dec184"; # also modified, conflict
     success = "#a1c181"; # also created
@@ -62,8 +47,7 @@
     diff_plus = "#98c379";
     diff_minus = "#e06c75";
 
-    # `search.match_background` and `search.active_match_background` at full
-    # opacity — Zed lays both over the buffer at 40%.
+    # The two search backgrounds at full opacity; Zed lays both over at 40%.
     search_match = "#74ade8";
     search_active = "#e8af74";
 
@@ -136,9 +120,7 @@
     search_match = "#5c79e2";
     search_active = "#d0a923";
 
-    # terminal.ansi.*. One Light spells `bright_black` `#000000`, the same as
-    # `black`, which would leave dim terminal text indistinguishable from the
-    # rest — slot 8 takes its `dim_black` instead.
+    # One Light spells `bright_black` as `black`, so slot 8 takes `dim_black`.
     ansi_black = "#000000";
     ansi_red = "#de3e35";
     ansi_green = "#3f953a";

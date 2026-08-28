@@ -1,6 +1,4 @@
-# sainnhe/gruvbox-material, verbatim. Its hues are desaturated against
-# morhetz's, which is the whole point of the fork, so the two are separate
-# themes here rather than flavors of one.
+# sainnhe/gruvbox-material, verbatim; desaturated enough to be its own theme.
 let
   hues = {
     red = "#ea6962";

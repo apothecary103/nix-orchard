@@ -1,8 +1,7 @@
 { lib, render }:
 
 let
-  # vivid's themes are hex without the '#', and every filetype group resolves
-  # through the named colours below rather than repeating literals.
+  # vivid's themes are hex without the '#'.
   theme = p: {
     colors = lib.mapAttrs (_: render.noHash) p.named;
 
@@ -61,15 +60,12 @@ let
 
 in
 {
-  # Only the theme file. LS_COLORS itself has to come out of `vivid generate
-  # <name>` in the shell's own init, because baking it into a session variable
-  # would mean reading a derivation at evaluation time.
+  # LS_COLORS has to come from `vivid generate` in the shell's own init.
   description = "LS_COLORS, via vivid";
 
   program = "vivid";
 
-  # vivid bundles catppuccin, all six gruvbox contrasts and both onedark ends,
-  # each with a curated filetype table far longer than the one below.
+  # vivid bundles catppuccin, six gruvbox contrasts and both onedark ends.
   integration = { };
 
   theme = { p, ... }: theme p;

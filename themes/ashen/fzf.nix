@@ -1,6 +1,4 @@
-# ashen/fzf, verbatim. Note that it paints its own background rather than
-# leaving it to the terminal, and that the pointer is the golden ember while
-# everything else selecting sits on blaze.
+# ashen/fzf, verbatim; it paints its own background rather than leaving it.
 { p }:
 
 let

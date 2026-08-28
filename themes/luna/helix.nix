@@ -1,8 +1,4 @@
-# luna for helix, written against luna.nvim's own treesitter groups. Luna is a
-# near-monochrome theme: identifiers, properties and members are all plain
-# foreground, punctuation and operators sit on the grey ramp, and only four
-# hues — keyword, func, type, string — ever appear. Getting that restraint right
-# matters more than covering every scope with a different colour.
+# luna for helix; only four hues ever appear, and the restraint is the point.
 { p, lib }:
 
 let
@@ -26,12 +22,10 @@ let
   };
 in
 {
-  # Syntax
   "comment" = italic "comment";
   "comment.block.documentation" = italic "comment";
 
-  # Identifier, Property and Variable are all `fg` upstream — the theme leans on
-  # weight and the four accents, not on colouring every name.
+  # Identifier, Property and Variable are all `fg` upstream.
   "variable" = "text";
   "variable.parameter" = "text";
   "variable.builtin" = "type";
@@ -86,8 +80,7 @@ in
   "punctuation.delimiter" = "operator";
   "punctuation.special" = "operator";
 
-  # Markup — luna's heading ramp runs silver, pale, type, light, light, silver
-  # rather than through hues, because it has none to spend.
+  # The heading ramp runs through greys, since luna has no hues to spend.
   "markup.heading" = bold "title";
   "markup.heading.1" = bold raw.silver;
   "markup.heading.2" = bold raw.grey_pale;
@@ -117,7 +110,6 @@ in
   "diff.minus" = "delete";
   "diff.delta" = "change";
 
-  # Interface
   "ui.linenr".fg = raw.line_nr;
   "ui.linenr.selected".fg = raw.silver;
 
@@ -185,8 +177,7 @@ in
   "ui.virtual.whitespace" = raw.line_nr;
   "ui.virtual.wrap" = "overlay0";
 
-  # Search is fg_bright on the plum wash; the incremental match swaps to the
-  # warm signal, which is also what the jump labels use.
+  # The incremental match swaps to the warm signal, as the jump labels do.
   "ui.virtual.jump-label" = bold "match";
   "ui.cursor.match" = {
     fg = "base";

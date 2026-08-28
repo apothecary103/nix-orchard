@@ -1,9 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/helix, scope for scope. Where upstream names a hue the hue is
-  # named here too, so a theme's own hue choices carry through; where it names a
-  # surface or something semantic, the role is used instead.
+  # catppuccin/helix, but semantic names become roles so theme choices carry through.
   theme =
     { p, transparent }:
     let
@@ -26,9 +24,7 @@ let
           over = p.surface.background;
         } amount;
 
-      # Upstream derives these rather than picking a palette step: the cursor
-      # line is a fraction of surface0 over the background, and each secondary
-      # cursor is its primary washed out to 70%.
+      # Derived upstream rather than picked: secondary cursors are theirs at 70%.
       derived = {
         cursorline = if p.isLight then over p.surface.panel 0.7 else over p.surface.neutral0 0.64;
         secondary_cursor = over p.ui.cursor 0.7;
@@ -117,9 +113,7 @@ let
       "ui.linenr".fg = "surface2";
       "ui.linenr.selected".fg = "overlay2";
 
-      # Helix's convention throughout its own themes: the active bar carries the
-      # theme's brightest chrome text and the inactive one a dimmer step, both on
-      # the same surface, with the mode block reading as accent-on-background.
+      # Helix's own convention: same surface, brightest text active, dimmer inactive.
       "ui.statusline" = {
         fg = "statusFg";
         bg = "statusBg";
@@ -268,8 +262,7 @@ let
         "rainbow5"
       ];
 
-      # Helix resolves every name above against this table, so the six rainbow
-      # steps and the derived shades have to appear in it as entries.
+      # Every name above resolves against this table, derived shades included.
       palette =
         p.named
         // derived
@@ -283,8 +276,7 @@ in
 
   transparency = true;
 
-  # helix resolves its own themes by name, so where it ships one there is
-  # nothing to write: the config just points at it.
+  # helix resolves themes by name, so where it ships one there is nothing to write.
   integration.upstream.transparent = true;
 
   resolveName =
@@ -295,13 +287,7 @@ in
     }:
     if upstream != null && cfg.transparent then "${name}-transparent" else name;
 
-  # Helix ships hand-tuned themes for most of what orchard carries, written
-  # against its own treesitter queries — around ninety scopes where the
-  # generated theme below reaches sixty, and kept in step with the grammars as
-  # they change. Where one exists it is inherited rather than replaced, which is
-  # also how helix builds its own variants: `gruvbox_dark_hard` is `inherits =
-  # "gruvbox"` and a palette. Only the themes helix has never heard of —
-  # evergarden, luna — are generated from the palette.
+  # A built-in is inherited rather than replaced, as helix builds its own variants.
   theme =
     {
       p,
@@ -312,14 +298,10 @@ in
     }:
     if upstream != null then
       {
-        # Only reached when the background has to come off; otherwise the
-        # config names the built-in and no file is written at all. `name` is
-        # the built-in, and the file this lands in is `<name>-transparent`, so
-        # this is not a theme inheriting itself.
+        # `name` is the built-in and the file is `<name>-transparent`, not itself.
         inherits = upstream;
 
-        # Helix's own recipe for a see-through variant: an empty ui.background
-        # leaves both the foreground and the fill to the terminal.
+        # An empty ui.background leaves foreground and fill to the terminal.
         "ui.background" = { };
       }
     else

@@ -1,8 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/tofi is four lines; the rest below are tofi's own defaults spelled
-  # out so the launcher does not fall back to its built-in blue.
+  # Past the four catppuccin/tofi lines, tofi's defaults, else it falls back to blue.
   theme = p: {
     text-color = p.surface.text;
     prompt-color = p.hue.red;

@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/btop. The point of it is the three-stop gradients: every meter
-  # travels across distinct hues rather than sitting on one, which is what makes
-  # btop readable at a glance.
+  # catppuccin/btop, whose meters travel three-stop gradients rather than one hue.
   theme = p: {
     main_bg = p.surface.background;
     main_fg = p.surface.text;
@@ -91,9 +89,7 @@ in
 
   program = "btop";
 
-  # btop bundles hand-tuned themes for gruvbox, gruvbox-material, onedark and
-  # adwaita, gradients and all. Not catppuccin — that one lives in
-  # catppuccin/btop, which the generated theme below already follows.
+  # btop bundles gruvbox, gruvbox-material, onedark and adwaita, but not catppuccin.
   integration = { };
 
   theme = { p, ... }: theme p;

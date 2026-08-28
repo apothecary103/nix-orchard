@@ -23,12 +23,7 @@
 
   defaultAccent = "blue";
 
-  # `base` sits below `mantle` rather than above it: luna's background is all
-  # but black, so the secondary surfaces it uses for statuslines and floats are
-  # the lighter ones, not darker.
-  # helix has never heard of luna, so rather than settle for the engine's
-  # generated theme it gets one written by hand against helix's scope list. The
-  # port's palette table and its transparency handling are kept.
+  # helix has never heard of luna, so its theme is written by hand.
   ports.helix =
     { p, lib, ... }:
     data: data // import ./helix.nix { inherit p lib; };
@@ -100,9 +95,7 @@
     match = p.raw.signal;
     title = p.raw.silver;
 
-    # mini.statusline's Filename section is `fg_bright` here, and StatusLineNC
-    # silver — a brighter foreground than the ramp would suggest, which is the
-    # whole look.
+    # A brighter statusline foreground than the ramp suggests, which is the look.
     statusBg = p.raw.bg_alt;
     statusFg = p.raw.fg_bright;
     statusDim = p.raw.silver;
@@ -116,8 +109,7 @@
       p.raw.type
     ];
 
-    # Upstream's terminal port doubles up: cyan is the blue, and slot 3 is the
-    # warm UI cue rather than the yellow the diagnostics use.
+    # Upstream doubles up: cyan is the blue, and slot 3 is the warm UI cue.
     ansi = [
       p.raw.black
       p.raw.error

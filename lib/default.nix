@@ -24,18 +24,14 @@ rec {
 
   inherit (render) noHash;
 
-  # program -> { description, options?, theme?, hjem?, home?, nixos? }. A port
-  # names the palette's roles and nothing else, so one definition serves every
-  # theme.
+  # A port names palette roles and nothing else, so one definition fits every theme.
   ports = loadDir ../ports;
 
-  # name -> theme spec, as consumed by palette.mkPalette.
   themes = lib.mapAttrs (name: theme: theme // { inherit name; }) (loadDir ../themes);
 
   mkPalette = theme: palette.mkPalette themes.${theme};
 
-  # One module per class, carrying every theme. Which one is worn is an option
-  # rather than a choice of import, so nothing downstream has to name a theme.
+  # One module per class carrying every theme, so the choice stays an option.
   mkModule =
     class:
     import ../modules/select.nix {

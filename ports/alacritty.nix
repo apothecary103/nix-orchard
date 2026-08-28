@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/alacritty for everything around the grid; the sixteen slots
-  # themselves come from the theme's own `ansi`, which is the mapping each
-  # upstream project chose for its terminal.
+  # catppuccin/alacritty, but the sixteen slots come from the theme's own ansi.
   theme =
     p:
     let

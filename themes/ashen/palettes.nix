@@ -1,6 +1,4 @@
-# ~ficd/ashen, taken from the palette its author maintains in helix. Twelve
-# greys and a small set of embers; the only cool colour in the whole theme is
-# one teal, which upstream calls `blue`.
+# ~ficd/ashen, from the palette its author maintains in helix.
 {
   g_1 = "#e5e5e5";
   g_2 = "#d5d5d5";
@@ -35,8 +33,7 @@
 
   blue = "#4A8B8B";
 
-  # Not in the helix palette, but ashen's own yazi and lazygit ports use both:
-  # the one green it has, and a softer red for select mode.
+  # Not in the helix palette, but ashen's own yazi and lazygit ports use both.
   green = "#629C7D";
   red_soft = "#BD4C4C";
 

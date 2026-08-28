@@ -4,7 +4,7 @@
   description = "Embers on charcoal";
   source = "https://codeberg.org/ficd/ashen.nvim";
 
-  # One flavor, and a dark one — ashen has no light counterpart.
+  # One flavor, and a dark one: ashen has no light counterpart.
   palettes.ashen = import ./palettes.nix;
 
   defaultFlavor = "ashen";
@@ -24,9 +24,7 @@
 
   defaultAccent = "blaze";
 
-  # helix ships it, written by ashen's own author. Ashen also publishes its own
-  # ports for yazi, fzf and fish; those are reproduced below rather than
-  # generated, because a theme this monochrome does not survive being derived.
+  # Ashen's own ports are reproduced below: this monochrome does not derive well.
   integrations.helix = {
     kind = "builtin";
     name = _: "ashen";
@@ -40,15 +38,12 @@
     fish = { p, ... }: _: import ./fish.nix { inherit p; };
   };
 
-  # The twelve greys carry the ramp; the embers carry everything else. Ashen has
-  # no green and one teal, so the cool end of the vocabulary all points at that
-  # single colour rather than pretending to a hue the theme does not have.
+  # Ashen has no green and one teal, so the whole cool end points at that teal.
   colours =
     { raw, ... }:
     raw
     // {
-      # Upstream stops at its background, so the step below it is mixed down
-      # rather than invented.
+      # Upstream stops at its background, so the step below is mixed down.
       crust = render.mix {
         colour = raw.background;
         over = "#000000";
@@ -79,9 +74,7 @@
       cherry = raw.g_2;
     };
 
-  # ashen.toml's own assignments, scope for scope: functions and variables are
-  # grey, keywords ember, strings the glowing red, and the accents are spent on
-  # operators and punctuation rather than on identifiers.
+  # ashen.toml scope for scope: the accents go to operators, not identifiers.
   roles = p: {
     cursor = p.raw.g_3;
     selection = p.raw.brown_dark;
@@ -131,11 +124,7 @@
       p.raw.red_ember
     ];
 
-    # Ashen's own terminal mapping, from the ghostty and kitty ports its author
-    # publishes. It is deliberately not a rainbow: the ember hues take the warm
-    # slots and the greys take magenta and cyan outright, rather than a green
-    # and a blue being invented for a theme that has neither. Getting this wrong
-    # is what makes a shell look wrong under it.
+    # Ashen's own mapping: greys take magenta and cyan rather than inventing hues.
     ansi = [
       p.raw.background
       p.raw.red_ember

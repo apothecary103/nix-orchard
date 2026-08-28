@@ -1,5 +1,4 @@
-# joshdick/onedark.vim, which is Atom's One Dark. `one-light` is Atom's One
-# Light, whose hues are the same family at print contrast.
+# joshdick/onedark.vim, which is Atom's One; `one-light` is it at print contrast.
 {
   dark = {
     crust = "#181a1f";

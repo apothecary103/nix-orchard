@@ -1,10 +1,7 @@
 { lib, render }:
 
 let
-  # Every UI component takes a foreground, a background, and four emphases that
-  # zellij picks between for key letters and highlighted words. Those are drawn
-  # over the component's own background, so drop any hue that would land on it —
-  # the accented ribbon is otherwise emphasised in its own background colour.
+  # Emphases are drawn over the component's background, so drop any hue matching it.
   theme =
     p:
     let
@@ -49,12 +46,10 @@ let
       exit_code_success = style p.status.success p.surface.panel;
       exit_code_error = style p.status.error p.surface.panel;
 
-      # multiplayer_user_colors is left alone: zellij defaults it to ANSI slots,
-      # which the terminal ports here already paint.
+      # multiplayer_user_colors defaults to ANSI slots, which are already painted.
     };
 
-  # The file is already named after the theme, but zellij still reads it as a
-  # themes block and takes the name from the node inside.
+  # zellij takes the theme name from the node inside, not from the file name.
   file = data: name: ''
     themes {
     ${render.toKdl "    " { ${name} = data; }}
@@ -66,8 +61,7 @@ in
 
   program = "zellij";
 
-  # zellij bundles catppuccin, gruvbox and onedark in its own component format,
-  # hand-authored per component rather than derived from twelve colours.
+  # zellij bundles catppuccin, gruvbox and onedark in its own component format.
   integration = { };
 
   theme = { p, ... }: theme p;

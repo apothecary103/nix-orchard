@@ -1,8 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/lazygit, including the author colour, which is the one thing that
-  # makes a busy log skimmable.
+  # catppuccin/lazygit.
   theme = p: {
     gui.theme = {
       activeBorderColor = [
@@ -26,8 +25,7 @@ let
   };
 in
 {
-  # No hjem binding: lazygit takes one config.yml and there is no port to merge
-  # a theme into, so writing the file would clobber the user's own.
+  # No hjem binding: lazygit takes one config.yml, so a file would clobber it.
   description = "lazygit";
 
   theme = { p, ... }: theme p;

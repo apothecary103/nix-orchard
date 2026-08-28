@@ -28,10 +28,7 @@
 
   defaultAccent = "mauve";
 
-  # Catppuccin has fourteen hues where the engine names twelve, and spells five
-  # of the overlapping ones differently. Both vocabularies stay live.
-  # bat, vivid and zellij all bundle every flavor; btop does not, because
-  # catppuccin/btop is where its theme lives and the generated one follows it.
+  # btop is absent: catppuccin/btop is where its theme lives, and it is followed.
   integrations = {
     helix = {
       kind = "builtin";
@@ -64,12 +61,9 @@
       cherry = raw.flamingo;
     };
 
-  # Catppuccin's own syntax conventions, which disagree with the engine's
-  # hue-derived defaults nearly everywhere.
+  # Catppuccin's own conventions, which disagree with the defaults nearly everywhere.
   roles = p: {
-    # Every upstream port uses rosewater for the cursor — the terminals, the
-    # editors and the jump labels alike — so it is the cursor role rather than
-    # the accent.
+    # Every upstream port uses rosewater here, so it is a role not the accent.
     cursor = p.rosewater;
 
     comment = p.overlay2;
@@ -118,8 +112,7 @@
       p.lavender
     ];
 
-    # Upstream's terminal port. Latte swaps the two ends of the grey ramp
-    # rather than reversing the whole thing.
+    # Upstream's terminal port; latte swaps the two ends of the grey ramp only.
     ansi =
       let
         dim = if p.isLight then p.subtext1 else p.surface1;

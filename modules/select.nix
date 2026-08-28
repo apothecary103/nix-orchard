@@ -11,14 +11,10 @@ let
 
   names = lib.attrNames themes;
 
-  # Flavors and accents differ per theme, so the option types accept the union
-  # and the assertion below narrows them to the theme actually chosen. A static
-  # enum could not do it: the type cannot read `config`.
+  # Types take the union because a type cannot read `config`; assertions narrow it.
   allFlavors = lib.unique (lib.concatMap palette.flavorsOf (lib.attrValues themes));
   allAccents = lib.unique (lib.concatMap palette.accentsOf (lib.attrValues themes));
 
-  # A class binding is either the module fragment itself or that fragment
-  # alongside the condition the program has to meet to be themed at all.
   binding =
     port:
     let
@@ -44,10 +40,7 @@ in
 let
   cfg = config.orchard;
 
-  # Where each class keeps the user's packages. A port that hangs off a program
-  # module is already gated by that module's `enable`; the ones that only write
-  # a file have nothing to hang off, so they look for the program instead. No
-  # sense shipping a micro colorscheme to someone without micro.
+  # Ports with no program module to hang off look for the package instead.
   installedIn = {
     hjem = config.packages or [ ];
     home = config.home.packages or [ ];
@@ -113,9 +106,7 @@ let
     in
     pick themeName "an accent" (palette.accentsOf theme) chosen theme.defaultAccent;
 
-  # Resolve the best integration for a program. Auto uses a built-in only when
-  # it can honour the requested accent and transparency; otherwise it falls
-  # back to Orchard's generated port.
+  # Auto takes a built-in only when it can honour the accent and transparency.
   integrationFor =
     name:
     if !(ports.${name} ? integration) then
@@ -174,9 +165,7 @@ let
       accent = accentOf source;
     };
 
-  # What every class binding is handed. `p` is the palette the program resolved
-  # to, `name` the string it files the theme under, `theme` the active theme's
-  # name, and `data` the port's colours after the theme has had its say.
+  # What every class binding is handed; `data` is the port's colours after the theme.
   argsFor =
     name: port:
     let
@@ -371,8 +360,8 @@ in
       default = false;
       description = ''
         Leave the background unpainted wherever a program can be told to, so
-        the terminal's own background — and whatever transparency it has — shows
-        through. Only the ports that can honour it carry the option.
+        the terminal's own background shows through, along with whatever
+        transparency it has. Only the ports that can honour it carry the option.
       '';
     };
 

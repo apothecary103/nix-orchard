@@ -1,9 +1,7 @@
 { lib, render }:
 
 let
-  # Follows catppuccin/yazi's flavor.toml node for node, including the icon
-  # section — the part a palette-derived theme usually drops and the part you
-  # actually look at.
+  # catppuccin/yazi's flavor.toml node for node, including the icon section.
   theme = p: {
     app.overall.bg = p.surface.background;
 
@@ -260,9 +258,7 @@ let
       tbl_col.bold = true;
     };
 
-    # Prepended rather than assigned: a bare `dirs`/`conds` replaces yazi's
-    # own set outright, and its several hundred `files` and `exts` entries are
-    # worth far more than the handful an accent could recolour.
+    # Prepended, since a bare `dirs`/`conds` would replace yazi's own set outright.
     icon = {
       prepend_dirs = [
         {
@@ -397,10 +393,7 @@ let
     };
   };
 
-  # A flavor rather than theme.toml, which yazi reserves for the user's own
-  # overrides: it layers preset < flavor < theme.toml. A flavor picks up the
-  # tmTheme sitting beside it, so the file preview matches the rest of the UI
-  # without pointing `syntect_theme` anywhere.
+  # A flavor, not theme.toml: yazi layers preset < flavor < theme.toml.
   files = pkgs: p: data: name: {
     "yazi/flavors/${name}.yazi/flavor.toml".source =
       (pkgs.formats.toml { }).generate "flavor.toml"
@@ -414,11 +407,7 @@ in
 
   transparency = true;
 
-  # yazi's own preset leaves `app.overall` an empty table, which is what makes
-  # it transparent out of the box — painting the base over it is what this port
-  # adds. So the transparent case drops the key rather than setting it to
-  # "reset": a reset background is still a background, and ratatui fills every
-  # cell with it.
+  # Dropped rather than set to "reset", since ratatui fills every cell with that.
   theme =
     { p, cfg, ... }:
     let

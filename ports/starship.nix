@@ -1,9 +1,7 @@
 { lib, ... }:
 
 let
-  # catppuccin/starship ships a palette and three styled modules; the palette is
-  # the contract, so the whole vocabulary goes in and the modules below only
-  # ever name a role.
+  # The palette is the contract, so the modules below only ever name a role.
   theme = p: name: {
     palette = lib.mkDefault name;
 

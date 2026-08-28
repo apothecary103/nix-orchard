@@ -1,9 +1,7 @@
 { lib, render }:
 
 let
-  # catppuccin/micro. Identifiers, types and tags all sit on blue, constants on
-  # the constant hue, and the two symbol groups split between pink and the soft
-  # warm tint.
+  # catppuccin/micro.
   theme =
     { p, transparent }:
     {

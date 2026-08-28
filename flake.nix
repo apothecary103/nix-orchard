@@ -44,7 +44,7 @@
     {
       lib = engine;
 
-      # theme -> flavor -> the resolved palette, on that theme's default accent.
+      # theme -> flavor -> palette, on that theme's default accent.
       palettes = lib.mapAttrs (
         name: theme:
         lib.genAttrs (engine.palette.flavorsOf theme) (

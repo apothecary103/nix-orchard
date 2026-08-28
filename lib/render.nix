@@ -33,10 +33,7 @@ rec {
       builtins.substring (clamped / 16) 1 digits + builtins.substring (lib.mod clamped 16) 1 digits
     ) values;
 
-  # `amount` of `colour` laid over `over`, which is what whiskers' `mix` filter
-  # does. Several upstream themes derive their cursorline and selection shades
-  # that way rather than picking a palette entry, so the maths has to come along
-  # or those surfaces land on the wrong step.
+  # whiskers' `mix`: several upstream themes derive surfaces this way, not by name.
   mix =
     { colour, over }:
     amount:
@@ -89,7 +86,7 @@ rec {
     else
       "${indent}${toString value}";
 
-  # A Sublime Text `.tmTheme`, which is what bat, yazi and delta all read.
+  # A Sublime `.tmTheme`, which is what bat, yazi and delta all read.
   mkTmTheme =
     { name, p }:
     let
@@ -134,9 +131,7 @@ rec {
           foreground = p.syntax.comment;
           fontStyle = "italic";
         })
-        # `punctuation.definition.string` is listed here rather than left to the
-        # punctuation rule below: tmTheme picks the longest matching selector,
-        # so this is what keeps quotes the colour of what they wrap.
+        # tmTheme takes the longest selector, so this keeps quotes the string colour.
         (rule "String" "string, string.quoted, punctuation.definition.string, markup.raw, markup.inline.raw"
           {
             foreground = p.syntax.string;

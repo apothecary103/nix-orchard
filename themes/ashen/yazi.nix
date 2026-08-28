@@ -1,7 +1,4 @@
-# ashen.yazi, verbatim. Two things it does that a derived flavor would not: the
-# cwd is orange rather than the accent, and it leaves `[icon]` alone entirely,
-# so yazi's own icon set — colours included — stays exactly as it ships. That is
-# why the directory glyph should not be wearing the accent.
+# ashen.yazi, verbatim; it leaves `[icon]` alone so yazi's own set stays.
 {
   p,
   lib,

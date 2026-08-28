@@ -47,9 +47,7 @@
 
   colours = { raw, ... }: raw;
 
-  # One's grammar, which is the reason it reads so cleanly: purple keywords,
-  # blue functions, green strings, yellow types, orange numbers and constants,
-  # and cyan for anything built in.
+  # One's grammar, with cyan reserved for anything built in.
   roles = p: {
     comment = p.overlay1;
 

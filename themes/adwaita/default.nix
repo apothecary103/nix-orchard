@@ -103,9 +103,7 @@
         }
     );
 
-  # GNOME Builder's scheme, as helix's adwaita themes spell it: bold orange
-  # keywords, blue functions, teal strings and types, violet constants and a
-  # purple operator — not the hue-derived defaults, which had none of this.
+  # GNOME Builder's scheme as helix spells it, not the hue-derived defaults.
   roles = p: {
     comment = if p.isLight then p.raw.light_6 else p.raw.dark_2;
 
