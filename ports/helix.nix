@@ -107,8 +107,8 @@ let
 
       "ui.background" = {
         fg = "text";
-        bg = if transparent then "none" else "base";
-      };
+      }
+      // lib.optionalAttrs (!transparent) { bg = "base"; };
 
       "ui.linenr".fg = "surface2";
       "ui.linenr.selected".fg = "overlay2";
