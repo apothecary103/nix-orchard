@@ -122,8 +122,32 @@ let
     upstream = null;
   };
   evergardenHelix = evergardenSpec.ports.helix evergardenArgs (ports.helix.theme evergardenArgs);
+  evergardenYazi = ports.yazi.theme evergardenArgs;
   evergardenBat = evergardenSpec.ports.bat evergardenArgs (ports.bat.theme evergardenArgs);
   evergardenBatFile = pkgs.writeText "evergarden-fall.tmTheme" evergardenBat;
+  evergardenModePairs = lib.concatMap (
+    flavor:
+    lib.concatMap (
+      accent:
+      let
+        p = palette.mkPalette evergardenSpec { inherit flavor accent; };
+      in
+      map
+        (state: {
+          label = "${flavor}/${accent}/${state}";
+          foreground = p.statusBar.mode.foreground;
+          background = p.statusBar.mode.${state};
+        })
+        [
+          "normal"
+          "insert"
+          "select"
+        ]
+    ) (palette.accentsOf evergardenSpec)
+  ) (palette.flavorsOf evergardenSpec);
+  evergardenModePairsFile = pkgs.writeText "evergarden-mode-pairs.json" (
+    builtins.toJSON evergardenModePairs
+  );
 
   evergardenFailures =
     lib.optional (
@@ -142,9 +166,15 @@ let
       evergardenHelix."ui.cursorline.primary" != { bg = "surface0"; }
     ) "evergarden: Helix cursorline must use upstream's surface0"
     ++ lib.optional (
-      evergardenPalette.statusBar.foreground != evergardenPalette.surface.textDim
+      evergardenPalette.statusBar.foreground != evergardenPalette.surface.text
+      || evergardenPalette.statusBar.inactive != evergardenPalette.surface.textDim
       || evergardenPalette.statusBar.dim != evergardenPalette.surface.neutral4
-    ) "evergarden: statusline contrast no longer matches upstream"
+    ) "evergarden: statusline emphasis tiers are no longer distinct"
+    ++ lib.optional (
+      evergardenPalette.statusBar.mode.foreground != evergardenPalette.surface.text
+      || evergardenHelix."ui.statusline.normal".fg != "statusModeFg"
+      || evergardenYazi.mode.normal_main.fg != evergardenPalette.statusBar.mode.foreground
+    ) "evergarden: applications bypassed the shared high-contrast mode-line role"
     ++ lib.optional (
       !(lib.hasInfix "Evergarden documentation strings" evergardenBat)
       || !(lib.hasInfix "Evergarden raw markup" evergardenBat)
@@ -178,11 +208,21 @@ let
     syntax = lib.genAttrs palette.publicSyntaxRoles (_: probeValue);
     ui = lib.genAttrs palette.publicUiRoles (_: probeValue);
     status = lib.genAttrs palette.publicStatusRoles (_: probeValue);
-    statusBar = lib.genAttrs [
-      "background"
-      "foreground"
-      "dim"
-    ] (_: probeValue);
+    statusBar =
+      lib.genAttrs [
+        "background"
+        "foreground"
+        "inactive"
+        "dim"
+      ] (_: probeValue)
+      // {
+        mode = lib.genAttrs [
+          "foreground"
+          "normal"
+          "insert"
+          "select"
+        ] (_: probeValue);
+      };
     decorative.rainbow = lib.genList (_: probeValue) 6;
     terminal.ansi = lib.genList (_: probeValue) 16;
     named = lib.genAttrs required (_: probeValue);
@@ -633,9 +673,32 @@ in
           "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" hjemFailures)} >&2; exit 1"
       );
 
-  palettes = pkgs.runCommandLocal "themes-palettes" { } (
+  palettes = pkgs.runCommandLocal "themes-palettes" { nativeBuildInputs = [ pkgs.python3 ]; } (
     if failures == [ ] then
-      "touch $out"
+      ''
+        python - ${evergardenModePairsFile} <<'PY'
+        import json
+        import sys
+
+        def luminance(colour):
+            channels = [int(colour[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+            return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+        failures = []
+        with open(sys.argv[1]) as source:
+            for pair in json.load(source):
+                foreground = luminance(pair["foreground"])
+                background = luminance(pair["background"])
+                ratio = (max(foreground, background) + 0.05) / (min(foreground, background) + 0.05)
+                if ratio < 4.5:
+                    failures.append(f'{pair["label"]}: {ratio:.2f}:1')
+
+        if failures:
+            raise SystemExit("evergarden mode-line contrast below 4.5:1:\n" + "\n".join(failures))
+        PY
+        touch $out
+      ''
     else
       "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" failures)} >&2; exit 1"
   );

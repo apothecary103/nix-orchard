@@ -87,7 +87,7 @@ Every theme resolves to the same names:
 | `syntax` | `keyword` `function` `macro` `type` `constant` `number` `string` `escape` `escapeAlt` `inlineCode` `special` `variable` `property` `module` `annotation` `operator` `punctuation` `comment` |
 | `ui` | `accent` `secondaryAccent` `cursor` `selection` `cursorLine` `search` `match` `title` |
 | `status` | `error` `errorMuted` `warning` `info` `hint` `success` `diffAdded` `diffDeleted` `diffChanged` |
-| `statusBar` | `background` `foreground` `dim` |
+| `statusBar` | `background` `foreground` `inactive` `dim`, plus `mode.{foreground,normal,insert,select}` |
 | `decorative` | `rainbow` (6) |
 | `terminal` | `ansi` (16) |
 

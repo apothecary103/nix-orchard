@@ -109,22 +109,22 @@ in
     bg = "statusBg";
   };
   "ui.statusline.inactive" = {
-    fg = "statusDim";
+    fg = "statusInactive";
     bg = "statusBg";
   };
   "ui.statusline.normal" = {
-    fg = "crust";
-    bg = "accent";
+    fg = "statusModeFg";
+    bg = "statusModeNormal";
     modifiers = [ "bold" ];
   };
   "ui.statusline.insert" = {
-    fg = "crust";
-    bg = "ok";
+    fg = "statusModeFg";
+    bg = "statusModeInsert";
     modifiers = [ "bold" ];
   };
   "ui.statusline.select" = {
-    fg = "crust";
-    bg = "info";
+    fg = "statusModeFg";
+    bg = "statusModeSelect";
     modifiers = [ "bold" ];
   };
 

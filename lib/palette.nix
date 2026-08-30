@@ -79,7 +79,12 @@ rec {
   statusBarRoles = [
     "statusBg"
     "statusFg"
+    "statusInactive"
     "statusDim"
+    "statusModeFg"
+    "statusModeNormal"
+    "statusModeInsert"
+    "statusModeSelect"
   ];
 
   publicSyntaxRoles = (lib.remove "func" syntaxRoles) ++ [ "function" ];
@@ -143,8 +148,13 @@ rec {
 
     # Every project picks its status bar rather than deriving it, so it gets roles.
     statusBg = c.mantle;
-    statusFg = c.subtext1;
+    statusFg = c.text;
+    statusInactive = c.subtext0;
     statusDim = c.overlay1;
+    statusModeFg = c.base;
+    statusModeNormal = c.accent;
+    statusModeInsert = c.ok;
+    statusModeSelect = c.info;
 
     rainbow = [
       c.red
@@ -236,7 +246,14 @@ rec {
       statusBar = {
         background = flat.statusBg;
         foreground = flat.statusFg;
+        inactive = flat.statusInactive;
         dim = flat.statusDim;
+        mode = {
+          foreground = flat.statusModeFg;
+          normal = flat.statusModeNormal;
+          insert = flat.statusModeInsert;
+          select = flat.statusModeSelect;
+        };
       };
       decorative.rainbow = flat.rainbow;
       terminal.ansi = flat.ansi;

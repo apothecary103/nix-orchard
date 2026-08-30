@@ -160,13 +160,31 @@ in
   colours = { raw, ... }: raw;
 
   # evergarden.nvim's choices where they differ from the engine defaults.
-  roles = p: {
-    annotation = p.cherry;
-    module = p.snow;
-    inlineCode = p.overlay1;
+  roles =
+    p:
+    let
+      mode =
+        colour:
+        render.mix {
+          inherit colour;
+          over = p.base;
+        } 0.34;
+    in
+    {
+      annotation = p.cherry;
+      module = p.snow;
+      inlineCode = p.overlay1;
 
-    statusBg = p.mantle;
-    statusFg = p.subtext0;
-    statusDim = p.overlay1;
-  };
+      statusBg = p.mantle;
+      statusFg = p.text;
+      statusInactive = p.subtext0;
+      statusDim = p.overlay1;
+
+      # Pale accents need a darker field before light mode-line text is legible.
+      # Summer naturally does the inverse because its base is light and text dark.
+      statusModeFg = p.text;
+      statusModeNormal = mode p.accent;
+      statusModeInsert = mode p.green;
+      statusModeSelect = mode p.aqua;
+    };
 }

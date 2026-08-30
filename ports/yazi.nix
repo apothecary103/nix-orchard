@@ -66,8 +66,8 @@ let
 
     mode = {
       normal_main = {
-        fg = p.surface.background;
-        bg = p.ui.accent;
+        fg = p.statusBar.mode.foreground;
+        bg = p.statusBar.mode.normal;
         bold = true;
       };
       normal_alt = {
@@ -75,7 +75,7 @@ let
         bg = p.surface.neutral0;
       };
       select_main = {
-        fg = p.surface.background;
+        fg = p.statusBar.mode.foreground;
         bg = p.status.success;
         bold = true;
       };
@@ -84,7 +84,7 @@ let
         bg = p.surface.neutral0;
       };
       unset_main = {
-        fg = p.surface.background;
+        fg = p.statusBar.mode.foreground;
         bg = p.hue.cherry;
         bold = true;
       };
@@ -120,7 +120,7 @@ let
       };
 
       progress_label = {
-        fg = p.surface.text;
+        fg = p.statusBar.foreground;
         bold = true;
       };
       progress_normal = {

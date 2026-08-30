@@ -119,22 +119,22 @@ let
         bg = "statusBg";
       };
       "ui.statusline.inactive" = {
-        fg = "statusDim";
+        fg = "statusInactive";
         bg = "statusBg";
       };
       "ui.statusline.normal" = {
-        fg = "base";
-        bg = "accent";
+        fg = "statusModeFg";
+        bg = "statusModeNormal";
         modifiers = [ "bold" ];
       };
       "ui.statusline.insert" = {
-        fg = "base";
-        bg = "ok";
+        fg = "statusModeFg";
+        bg = "statusModeInsert";
         modifiers = [ "bold" ];
       };
       "ui.statusline.select" = {
-        fg = "base";
-        bg = "info";
+        fg = "statusModeFg";
+        bg = "statusModeSelect";
         modifiers = [ "bold" ];
       };
 
