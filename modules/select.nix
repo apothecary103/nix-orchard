@@ -129,7 +129,9 @@ let
         }
         // (ports.${name}.integration.upstream or { });
         supported =
-          (capabilities.accent || accentOf cfg.${name} == theme.defaultAccent)
+          # A global accent guides generated ports; it should not disqualify a
+          # hand-tuned upstream theme. Only a per-port accent is a requirement.
+          (capabilities.accent || cfg.${name}.accent == null || accentOf cfg.${name} == theme.defaultAccent)
           && (capabilities.transparent || !(cfg.${name}.transparent or false));
         requested = cfg.${name}.source;
       in

@@ -340,6 +340,9 @@ let
   defaultSelection = evalSelector {
     enable = false;
     theme = "catppuccin";
+    # Global accents guide generated ports without replacing a hand-tuned
+    # upstream theme that uses the theme's own fixed accent choices.
+    accent = "blue";
   };
 
   customSelection = evalSelector {
