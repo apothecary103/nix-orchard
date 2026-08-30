@@ -34,6 +34,16 @@ let
       malformed =
         lib.filter (name: hex p.named.${name} == null) (lib.filter (name: p.named ? ${name}) required)
         ++ lib.filter (colour: hex colour == null) loose;
+
+      publicGroups = {
+        syntax = palette.publicSyntaxRoles;
+        ui = palette.publicUiRoles;
+        status = palette.publicStatusRoles;
+      };
+
+      wrongPublicGroups = lib.filter (
+        group: lib.attrNames p.${group} != lib.sort lib.lessThan publicGroups.${group}
+      ) (lib.attrNames publicGroups);
     in
     lib.optional (missing != [ ]) "${themeName}/${flavor}/${accent}: missing ${toString missing}"
     ++ lib.optional (
@@ -44,7 +54,10 @@ let
     ) "${themeName}/${flavor}/${accent}: rainbow is not 6 colours"
     ++ lib.optional (
       lib.length p.terminal.ansi != 16
-    ) "${themeName}/${flavor}/${accent}: ansi is not 16 colours";
+    ) "${themeName}/${flavor}/${accent}: ansi is not 16 colours"
+    ++ lib.optional (
+      wrongPublicGroups != [ ]
+    ) "${themeName}/${flavor}/${accent}: non-canonical public groups ${toString wrongPublicGroups}";
 
   paletteFailures = lib.concatLists (
     lib.mapAttrsToList (
@@ -92,7 +105,53 @@ let
     ) themes
   );
 
-  failures = paletteFailures ++ themeFailures;
+  evergardenSpec = themes.evergarden;
+  evergardenPalette = palette.mkPalette evergardenSpec {
+    flavor = "fall";
+    accent = evergardenSpec.defaultAccent;
+  };
+  evergardenArgs = {
+    inherit lib pkgs;
+    p = evergardenPalette;
+    cfg.transparent = false;
+    name = "evergarden-fall";
+    theme = "evergarden";
+    flavor = "fall";
+    accent = evergardenSpec.defaultAccent;
+    spec = evergardenSpec;
+    upstream = null;
+  };
+  evergardenHelix = evergardenSpec.ports.helix evergardenArgs (ports.helix.theme evergardenArgs);
+  evergardenBat = evergardenSpec.ports.bat evergardenArgs (ports.bat.theme evergardenArgs);
+  evergardenBatFile = pkgs.writeText "evergarden-fall.tmTheme" evergardenBat;
+
+  evergardenFailures =
+    lib.optional (
+      evergardenHelix.type != {
+        fg = "type";
+        modifiers = [ "italic" ];
+      }
+    ) "evergarden: Helix types must retain upstream's italic yellow style"
+    ++ lib.optional (
+      evergardenHelix."function.macro" != "aqua"
+    ) "evergarden: Helix macros must retain upstream's aqua Tree-sitter capture"
+    ++ lib.optional (
+      evergardenHelix."markup.link.url" != "blue"
+    ) "evergarden: Helix URLs must retain upstream's blue capture"
+    ++ lib.optional (
+      evergardenHelix."ui.cursorline.primary" != { bg = "surface0"; }
+    ) "evergarden: Helix cursorline must use upstream's surface0"
+    ++ lib.optional (
+      evergardenPalette.statusBar.foreground != evergardenPalette.surface.textDim
+      || evergardenPalette.statusBar.dim != evergardenPalette.surface.neutral4
+    ) "evergarden: statusline contrast no longer matches upstream"
+    ++ lib.optional (
+      !(lib.hasInfix "Evergarden documentation strings" evergardenBat)
+      || !(lib.hasInfix "Evergarden raw markup" evergardenBat)
+      || !(lib.hasInfix "Evergarden function macros" evergardenBat)
+    ) "evergarden: Bat lost its semantic TextMate overrides";
+
+  failures = paletteFailures ++ themeFailures ++ evergardenFailures;
 
   # A port naming something outside the vocabulary breaks every theme at once.
   probeValue = "#abcdef";
@@ -116,17 +175,9 @@ let
       "text"
     ] (_: probeValue);
     hue = lib.genAttrs palette.hues (_: probeValue);
-    syntax = lib.genAttrs (palette.syntaxRoles ++ [ "function" ]) (_: probeValue);
-    ui = lib.genAttrs (palette.uiRoles ++ [ "cursorLine" ]) (_: probeValue);
-    status = lib.genAttrs (
-      palette.statusRoles
-      ++ [
-        "success"
-        "diffAdded"
-        "diffDeleted"
-        "diffChanged"
-      ]
-    ) (_: probeValue);
+    syntax = lib.genAttrs palette.publicSyntaxRoles (_: probeValue);
+    ui = lib.genAttrs palette.publicUiRoles (_: probeValue);
+    status = lib.genAttrs palette.publicStatusRoles (_: probeValue);
     statusBar = lib.genAttrs [
       "background"
       "foreground"
@@ -589,9 +640,19 @@ in
       "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" failures)} >&2; exit 1"
   );
 
-  ports = pkgs.runCommandLocal "themes-ports" {
-    covered = builtins.seq (force rendered) (
-      builtins.seq (force themedRendered) (toString (lib.attrNames ports))
-    );
-  } "touch $out";
+  ports =
+    pkgs.runCommandLocal "themes-ports"
+      {
+        covered = builtins.seq (force rendered) (
+          builtins.seq (force themedRendered) (toString (lib.attrNames ports))
+        );
+        nativeBuildInputs = [ pkgs.bat ];
+      }
+      ''
+        mkdir -p theme-source/themes bat-cache
+        cp ${evergardenBatFile} theme-source/themes/evergarden-fall.tmTheme
+        BAT_CONFIG_PATH=/dev/null bat cache --build \
+          --source=theme-source --target=bat-cache
+        touch $out
+      '';
 }

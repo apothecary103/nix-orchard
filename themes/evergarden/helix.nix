@@ -37,8 +37,8 @@ in
   "string" = "string";
   "string.regexp" = "escape";
   "string.special" = "special";
-  "string.special.url" = "info";
-  "string.special.path" = "info";
+  "string.special.url" = "blue";
+  "string.special.path" = "blue";
   "string.special.symbol" = "special";
 
   "keyword" = italic "keyword";
@@ -56,13 +56,13 @@ in
 
   "function" = "func";
   "function.builtin" = "orange";
-  "function.macro" = "macro";
+  "function.macro" = "aqua";
   "function.method" = "func";
   "constructor" = "func";
 
-  "type" = "type";
-  "type.builtin" = "type";
-  "type.parameter" = "type";
+  "type" = italic "type";
+  "type.builtin" = italic "type";
+  "type.parameter" = italic "type";
   "type.enum.variant" = "constant";
 
   "attribute" = "annotation";
@@ -78,24 +78,18 @@ in
   "punctuation.delimiter" = "punctuation";
   "punctuation.special" = "special";
 
-  "markup.heading" = bold "title";
-  "markup.heading.1" = bold "rainbow0";
-  "markup.heading.2" = bold "rainbow1";
-  "markup.heading.3" = bold "rainbow2";
-  "markup.heading.4" = bold "rainbow3";
-  "markup.heading.5" = bold "rainbow4";
-  "markup.heading.6" = bold "rainbow5";
+  "markup.heading" = "title";
+  "markup.heading.1" = "rainbow0";
+  "markup.heading.2" = "rainbow1";
+  "markup.heading.3" = "rainbow2";
+  "markup.heading.4" = "rainbow3";
+  "markup.heading.5" = "rainbow4";
+  "markup.heading.6" = "rainbow5";
   "markup.bold" = bold "aqua";
   "markup.italic" = italic "skye";
   "markup.strikethrough".modifiers = [ "crossed_out" ];
-  "markup.link.url" = {
-    fg = "info";
-    modifiers = [
-      "italic"
-      "underlined"
-    ];
-  };
-  "markup.link.text" = "info";
+  "markup.link.url" = "blue";
+  "markup.link.text" = "blue";
   "markup.link.label" = italic "skye";
   "markup.raw" = "overlay1";
   "markup.quote" = italic "overlay2";
@@ -140,23 +134,19 @@ in
   };
   "ui.window".fg = "surface1";
   "ui.help" = {
-    fg = "subtext0";
+    fg = "text";
     bg = "mantle";
   };
 
   "ui.bufferline" = {
-    fg = "subtext0";
-    bg = "mantle";
+    fg = "overlay1";
+    bg = "surface0";
   };
   "ui.bufferline.active" = {
-    fg = "accent";
-    bg = "base";
-    underline = {
-      color = "accent";
-      style = "line";
-    };
+    fg = "crust";
+    bg = "accent";
   };
-  "ui.bufferline.background".bg = "crust";
+  "ui.bufferline.background".bg = "base";
 
   "ui.text" = "text";
   "ui.text.focus" = {
@@ -165,24 +155,25 @@ in
     modifiers = [ "bold" ];
   };
   "ui.text.inactive".fg = "overlay1";
-  "ui.text.directory".fg = "info";
+  "ui.text.directory".fg = "overlay2";
 
   "ui.virtual" = "overlay0";
   "ui.virtual.ruler".bg = "surface0";
   "ui.virtual.indent-guide" = "surface1";
   "ui.virtual.inlay-hint" = italic "overlay0";
-  "ui.virtual.whitespace" = "surface2";
-  "ui.virtual.wrap" = "surface2";
+  "ui.virtual.whitespace" = "overlay0";
+  "ui.virtual.wrap" = "overlay0";
 
   # `incsearch` is orange upstream and `search` snow; the jump labels follow.
   "ui.virtual.jump-label" = bold "match";
   "ui.cursor.match" = bold "match";
 
   "ui.selection".bg = "selection";
+  "ui.cursorline.primary".bg = "surface0";
   "ui.highlight".bg = "surface1";
 
   "ui.menu" = {
-    fg = "subtext0";
+    fg = "text";
     bg = "mantle";
   };
   "ui.menu.selected" = {
@@ -192,7 +183,7 @@ in
   };
   "ui.menu.scroll" = {
     fg = "overlay0";
-    bg = "surface0";
+    bg = "surface1";
   };
 
   "diagnostic.error" = curl "error";

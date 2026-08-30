@@ -82,6 +82,24 @@ rec {
     "statusDim"
   ];
 
+  publicSyntaxRoles = (lib.remove "func" syntaxRoles) ++ [ "function" ];
+
+  publicUiRoles = (lib.remove "cursorline" uiRoles) ++ [ "cursorLine" ];
+
+  publicStatusRoles =
+    (lib.subtractLists [
+      "ok"
+      "add"
+      "delete"
+      "change"
+    ] statusRoles)
+    ++ [
+      "success"
+      "diffAdded"
+      "diffDeleted"
+      "diffChanged"
+    ];
+
   # Defaults a theme may override; the rest fall out of the twelve hues.
   roles = c: {
     cursor = c.accent;
@@ -184,6 +202,17 @@ rec {
       flat = lib.fix (
         self: colours // roles self // (theme.roles or (_: { })) self // { accent = accentColour; }
       );
+
+      aliases = {
+        function = flat.func;
+        cursorLine = flat.cursorline;
+        success = flat.ok;
+        diffAdded = flat.add;
+        diffDeleted = flat.delete;
+        diffChanged = flat.change;
+      };
+
+      resolved = flat // aliases;
     in
     {
       surface = {
@@ -201,18 +230,9 @@ rec {
         text = flat.text;
       };
       hue = lib.getAttrs hues flat;
-      syntax = (lib.getAttrs syntaxRoles flat) // {
-        function = flat.func;
-      };
-      ui = (lib.getAttrs uiRoles flat) // {
-        cursorLine = flat.cursorline;
-      };
-      status = (lib.getAttrs statusRoles flat) // {
-        success = flat.ok;
-        diffAdded = flat.add;
-        diffDeleted = flat.delete;
-        diffChanged = flat.change;
-      };
+      syntax = lib.getAttrs publicSyntaxRoles resolved;
+      ui = lib.getAttrs publicUiRoles resolved;
+      status = lib.getAttrs publicStatusRoles resolved;
       statusBar = {
         background = flat.statusBg;
         foreground = flat.statusFg;
@@ -222,9 +242,9 @@ rec {
       terminal.ansi = flat.ansi;
 
       # For helix, starship and vivid, which resolve styles by key not by value.
-      named = lib.getAttrs (
-        surfaces ++ hues ++ syntaxRoles ++ uiRoles ++ statusRoles ++ statusBarRoles
-      ) flat;
+      named =
+        lib.getAttrs (surfaces ++ hues ++ syntaxRoles ++ uiRoles ++ statusRoles ++ statusBarRoles) flat
+        // aliases;
 
       # The theme's own vocabulary, where a colour has no portable name.
       native = raw;

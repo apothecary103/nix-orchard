@@ -88,7 +88,11 @@ rec {
 
   # A Sublime `.tmTheme`, which is what bat, yazi and delta all read.
   mkTmTheme =
-    { name, p }:
+    {
+      name,
+      p,
+      extraRules ? [ ],
+    }:
     let
       settings =
         attrs:
@@ -107,6 +111,8 @@ rec {
         ${settings attrs}
         			</dict>
         		</dict>'';
+
+      extraRule = entry: rule entry.name entry.scope entry.settings;
 
       # The first entry carries no scope; syntect reads it as the defaults.
       global = ''
@@ -132,11 +138,12 @@ rec {
           fontStyle = "italic";
         })
         # tmTheme takes the longest selector, so this keeps quotes the string colour.
-        (rule "String" "string, string.quoted, punctuation.definition.string, markup.raw, markup.inline.raw"
-          {
-            foreground = p.syntax.string;
-          }
-        )
+        (rule "String" "string, string.quoted, punctuation.definition.string" {
+          foreground = p.syntax.string;
+        })
+        (rule "Raw markup" "markup.raw, markup.raw.inline, markup.raw.block, markup.inline.raw" {
+          foreground = p.syntax.inlineCode;
+        })
         (rule "String escape and regexp" "constant.character.escape, string.regexp" {
           foreground = p.syntax.escape;
         })
@@ -202,7 +209,8 @@ rec {
           foreground = p.surface.background;
           background = p.status.error;
         })
-      ];
+      ]
+      ++ map extraRule extraRules;
     in
     ''
       <?xml version="1.0" encoding="UTF-8"?>
