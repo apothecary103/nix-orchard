@@ -110,12 +110,12 @@ removeAttrs data [ "icon" ]
 
   status = {
     sep_left = {
-      open = "";
-      close = "";
+      open = "";
+      close = "";
     };
     sep_right = {
-      open = "";
-      close = "";
+      open = "";
+      close = "";
     };
 
     progress_label = {
@@ -187,25 +187,22 @@ removeAttrs data [ "icon" ]
   };
 
   which = {
-    mask.bg = raw.g_9;
+    border.fg = raw.orange_blaze;
+    mask = { };
     cand.fg = raw.orange_smolder;
     rest.fg = raw.g_3;
     desc.fg = raw.red_glowing;
-    separator = "  ";
+    separator = "  ";
     separator_style.fg = raw.red_ember;
   };
 
   help = {
-    on.fg = raw.orange_glow;
-    run.fg = raw.red_glowing;
-    desc.fg = raw.g_2;
+    border.fg = raw.orange_blaze;
+    chord.fg = raw.orange_glow;
+    action.fg = raw.g_2;
     hovered = {
       reversed = true;
       bold = true;
-    };
-    footer = {
-      fg = raw.g_1;
-      bg = raw.background;
     };
   };
 
@@ -227,19 +224,19 @@ removeAttrs data [ "icon" ]
 
   filetype.rules = [
     {
-      mime = "image/*";
+      mime = "**/image/*";
       fg = raw.orange_smolder;
     }
     {
-      mime = "{audio,video}/*";
+      mime = "**/{audio,video}/*";
       fg = raw.orange_glow;
     }
     {
-      mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
+      mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
       fg = raw.red_glowing;
     }
     {
-      mime = "application/{pdf,doc,rtf}";
+      mime = "**/application/{pdf,doc,rtf}";
       fg = raw.orange_blaze;
     }
     {

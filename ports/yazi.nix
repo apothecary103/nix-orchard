@@ -111,12 +111,12 @@ let
 
     status = {
       sep_left = {
-        open = "";
-        close = "";
+        open = "";
+        close = "";
       };
       sep_right = {
-        open = "";
-        close = "";
+        open = "";
+        close = "";
       };
 
       progress_label = {
@@ -173,25 +173,22 @@ let
     };
 
     which = {
-      mask.bg = p.surface.neutral0;
+      border.fg = p.ui.accent;
+      mask = { };
       cand.fg = p.hue.aqua;
       rest.fg = p.surface.neutral5;
       desc.fg = p.hue.pink;
-      separator = "  ";
+      separator = "  ";
       separator_style.fg = p.surface.neutral2;
     };
 
     help = {
-      on.fg = p.hue.aqua;
-      run.fg = p.hue.pink;
-      desc.fg = p.surface.neutral5;
+      border.fg = p.ui.accent;
+      chord.fg = p.hue.aqua;
+      action.fg = p.surface.neutral5;
       hovered = {
         bg = p.surface.neutral2;
         bold = true;
-      };
-      footer = {
-        fg = p.surface.text;
-        bg = p.surface.neutral1;
       };
     };
 
@@ -203,19 +200,19 @@ let
 
     filetype.rules = [
       {
-        mime = "image/*";
+        mime = "**/image/*";
         fg = p.hue.yellow;
       }
       {
-        mime = "{audio,video}/*";
+        mime = "**/{audio,video}/*";
         fg = p.hue.pink;
       }
       {
-        mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
+        mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
         fg = p.hue.red;
       }
       {
-        mime = "application/{pdf,doc,rtf}";
+        mime = "**/application/{pdf,doc,rtf}";
         fg = p.hue.skye;
       }
       {
