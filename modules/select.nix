@@ -106,7 +106,7 @@ let
     in
     pick themeName "an accent" (palette.accentsOf theme) chosen theme.defaultAccent;
 
-  # Auto takes a built-in only when it can honour the accent and transparency.
+  # Providers are ordered by provenance and filtered by target capabilities.
   integrationFor =
     name:
     if !(ports.${name} ? integration) then
@@ -115,37 +115,68 @@ let
       let
         theme = themeOf cfg.${name};
         declared = (theme.integrations or { }).${name} or null;
-        available =
+        providerArgs = {
+          inherit pkgs;
+          theme = themeNameOf cfg.${name};
+          flavor = flavorOf cfg.${name};
+          accent = accentOf cfg.${name};
+          isLight = (paletteFor cfg.${name}).isLight;
+        };
+        entries =
           if declared == null then
-            null
+            [ ]
+          else if declared ? providers then
+            declared.providers
           else
-            let
-              upstreamName = declared.name (flavorOf cfg.${name});
-            in
-            if upstreamName == null then null else declared // { name = upstreamName; };
-        capabilities = {
-          accent = false;
-          transparent = false;
-        }
-        // (ports.${name}.integration.upstream or { });
-        supported =
-          # A global accent guides generated ports; it should not disqualify a
-          # hand-tuned upstream theme. Only a per-port accent is a requirement.
-          (capabilities.accent || cfg.${name}.accent == null || accentOf cfg.${name} == theme.defaultAccent)
-          && (capabilities.transparent || !(cfg.${name}.transparent or false));
+            [ declared ];
+        providerRank = {
+          official = 0;
+          builtin = 1;
+          community = 2;
+        };
+        providers = lib.sort (
+          left: right: (providerRank.${left.kind} or 99) < (providerRank.${right.kind} or 99)
+        ) entries;
+        resolve =
+          provider:
+          let
+            providerSupported = !(provider ? supports) || provider.supports providerArgs;
+            resolved =
+              if !providerSupported then
+                null
+              else if provider ? resolve then
+                provider.resolve providerArgs
+              else
+                let
+                  upstreamName = provider.name providerArgs.flavor;
+                in
+                if upstreamName == null then null else { name = upstreamName; };
+            capabilities = {
+              accent = false;
+              transparent = false;
+            }
+            // (provider.capabilities or { })
+            // (ports.${name}.integration.upstream or { });
+            supported =
+              resolved != null
+              && providerSupported
+              # A global accent guides generated ports; it should not
+              # disqualify a fixed upstream theme. A per-port accent is a
+              # requirement unless the provider can honour it.
+              && (capabilities.accent || cfg.${name}.accent == null || providerArgs.accent == theme.defaultAccent)
+              && (capabilities.transparent || !(cfg.${name}.transparent or false));
+          in
+          if supported then provider // resolved else null;
+        available = lib.findFirst (provider: provider != null) null (map resolve providers);
         requested = cfg.${name}.source;
       in
       if requested == "generated" then
         null
-      else if requested == "upstream" then
-        lib.throwIf (available == null)
-          "orchard: ${themeNameOf cfg.${name}} has no upstream ${name} integration"
-          (
-            lib.throwIf (!supported)
-              "orchard: the upstream ${name} integration cannot honour the requested accent or transparency; use source = \"auto\" or \"generated\""
-              available
-          )
-      else if available != null && supported then
+      else if requested == "upstream" || requested == "require-upstream" then
+        lib.throwIf (
+          available == null
+        ) "orchard: ${themeNameOf cfg.${name}} has no upstream ${name} integration" available
+      else if available != null then
         available
       else
         null;
@@ -182,6 +213,7 @@ let
         accent = accentOf cfg.${name};
         spec = theme;
         upstream = upstreamFor name;
+        provider = integrationFor name;
         port = name;
       };
 
@@ -207,9 +239,17 @@ let
     {
       enable = lib.mkOption {
         type = lib.types.bool;
-        default = cfg.enable && cfg.autoEnable && installed port;
-        defaultText = lib.literalExpression "config.orchard.enable && config.orchard.autoEnable, if the program is installed";
-        description = "Whether to theme ${port.description or name}.";
+        default = cfg.enable && cfg.autoEnable && (port.activation or "auto") == "auto" && installed port;
+        defaultText =
+          if (port.activation or "auto") == "explicit" then
+            lib.literalExpression "false"
+          else
+            lib.literalExpression "config.orchard.enable && config.orchard.autoEnable, if the program is installed";
+        description =
+          "Whether to theme ${port.description or name}."
+          + lib.optionalString (
+            (port.activation or "auto") == "explicit"
+          ) " This broad integration is always opt-in.";
       };
 
       flavor = lib.mkOption {
@@ -269,31 +309,48 @@ let
     }
     // lib.optionalAttrs (port ? integration) {
       source = lib.mkOption {
-        type = lib.types.enum [
-          "auto"
-          "upstream"
-          "generated"
-        ];
-        default = "auto";
+        type = lib.types.enum (
+          [
+            "auto"
+            "upstream"
+            "prefer-upstream"
+            "require-upstream"
+          ]
+          ++ lib.optional (port.generated or (port ? theme)) "generated"
+        );
+        default = "prefer-upstream";
         description = ''
-          Where this program's theme comes from. Auto prefers an upstream theme
-          when it exists and can honour the requested accent and transparency,
-          then falls back to Orchard's generated theme. Upstream requires a
-          compatible built-in integration; generated always uses the palette.
+          Where this program's theme comes from. Prefer-upstream selects the
+          first compatible official, built-in, or community provider and falls
+          back to Orchard's generated theme when this port has a renderer.
+          Require-upstream fails without a compatible provider. Generated,
+          where offered, always uses the palette. The old auto and upstream
+          spellings remain as aliases.
         '';
       };
 
       resolvedSource = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.enum [
+          "official"
+          "builtin"
+          "community"
+          "generated"
+          "unavailable"
+        ];
         readOnly = true;
         default =
           let
             integration = integrationFor name;
           in
-          if integration == null then "generated" else integration.kind;
+          if integration != null then
+            integration.kind
+          else if port.generated or (port ? theme) then
+            "generated"
+          else
+            "unavailable";
         description = ''
-          Source actually selected for this program: generated, builtin, or an
-          official theme integration.
+          Source actually selected for this program: official, builtin,
+          community, generated, or unavailable.
         '';
       };
     }
@@ -388,6 +445,12 @@ in
         inherit (t) description source;
         flavors = palette.flavorsOf t;
         accents = palette.accentsOf t;
+        integrations = lib.mapAttrs (
+          _: integration:
+          map (provider: provider.kind) (
+            if integration ? providers then integration.providers else [ integration ]
+          )
+        ) (t.integrations or { });
       }) themes;
       description = "Every theme on offer, with the flavors and accents it takes.";
     };

@@ -1,6 +1,9 @@
 # Orchard
 
-A shared theme system for Nix. Pick a theme once and every program you already use gets themed to match.
+A shared theme system for Nix. Pick a theme once and every supported program you
+already use gets themed to match. Orchard prefers work maintained by the theme
+or application authors and uses its semantic palette renderer only as a
+fallback.
 
 ```nix
 {
@@ -26,9 +29,13 @@ A shared theme system for Nix. Pick a theme once and every program you already u
     accent = "blue";       # likewise
 
     transparent = true;       # where a program can be told to skip its background
-    ghostty.enable = false;   # opt out of one port
+    ghostty.enable = false;   # opt out of one application port
     btop.theme = "gruvbox";   # or theme one program differently
     yazi.transparent = false; # or keep one opaque
+
+    # Session-wide toolkit integrations are always explicit.
+    gtk.enable = true;
+    qt.enable = true;
   };
 }
 ```
@@ -42,9 +49,10 @@ dark-soft, light, light-hard, light-soft
 
 ## Which programs get themed
 
-By default Orchard themes the programs you have already enabled, plus the ones
-that only need a file dropped somewhere if they are in your packages. That is
-`autoEnable`. Turn it off and nothing is themed until you ask:
+By default Orchard themes supported applications you have already enabled, plus
+the ones that only need a file dropped somewhere if they are in your packages.
+That is `autoEnable`. Turn it off and no application port is themed until you
+ask:
 
 ```nix
 orchard.autoEnable = false;
@@ -53,18 +61,51 @@ orchard.helix.enable = true;
 
 Either way, `orchard.<port>.enable` decides a single program.
 
+Broad integrations are never auto-enabled. GTK, Qt and the Linux virtual
+console require their own `enable = true` even while `autoEnable` is on.
+
 These are the programs Orchard knows:
 
-`alacritty` `bat` `btop` `console` `delta` `eza` `fish` `foot` `fuzzel` `fzf`
+`alacritty` `bat` `btop` `console` `delta` `eza` `fish` `foot` `fuzzel` `fzf` `gtk`
 `ghostty` `glamour` `helix` `imv` `kitty` `lazygit` `mako` `micro` `rmpc`
-`starship` `tmux` `tofi` `vivid` `wezterm` `yazi` `zathura` `zellij`
+`qt` `starship` `tmux` `tofi` `vivid` `wezterm` `yazi` `zathura` `zellij`
 `zsh-syntax-highlighting`
 
-Most work under hjem and home-manager. `lazygit`, `mako` and `zathura` are
-home-manager only, and the Linux virtual `console` is NixOS only.
+Most work under hjem and home-manager. `gtk`, `qt`, `lazygit`, `mako` and
+`zathura` are home-manager only, and the Linux virtual `console` is NixOS only.
 
 `helix`, `yazi`, `fzf` and `micro` can skip their background, and follow
 `orchard.transparent` unless you set their own.
+
+## GTK and Qt
+
+Toolkit theming affects an entire graphical session, so it is opt-in and never
+generated from palette colours. Enable it directly alongside the default
+module:
+
+```nix
+{
+  orchard = {
+    enable = true;
+    theme = "catppuccin";
+    gtk.enable = true;
+    qt.enable = true;
+  };
+}
+```
+
+Alternatively import one self-contained Home Manager module instead of the
+default module. `desktop` enables both integrations; `gtk` and `qt` enable one:
+
+```nix
+imports = [ inputs.orchard.homeModules.desktop ];
+```
+
+Catppuccin uses its official GTK and Kvantum projects from the pinned nixpkgs.
+Adwaita uses GTK's native theme and the Adwaita Qt integration on Linux. Other
+themes currently fail clearly when a toolkit integration is requested; Orchard
+does not invent GTK CSS or Kvantum assets for them. Catppuccin Qt is likewise
+Linux-only because the Kvantum engine is not available on Darwin.
 
 ## Using the palette elsewhere
 
@@ -117,19 +158,27 @@ Palettes are copied into the repo rather than fetched, so evaluation stays pure.
 
 ## Upstream themes
 
-Some programs ship the theme you asked for already. Where that happens, Orchard
-would rather use theirs than generate its own: they usually cover more syntax
-scopes and stay in step with the program. Those ports take a `source`:
+Themes can have several providers. Orchard tries compatible providers in this
+order: an official theme-project integration, a theme built into the target
+application, then a community integration. Only then may a normal application
+port use its generated renderer. Providers can carry pinned packages and files,
+not merely a built-in theme name.
 
-- `auto` (the default) uses the program's own theme when it exists and can do
-  what you asked for, and generates one otherwise.
-- `upstream` insists on the program's own theme and fails if there isn't one.
+Ports with a generated fallback take a `source`:
+
+- `prefer-upstream` (the default) uses the best compatible provider and
+  generates a theme only when there is none.
+- `require-upstream` insists on a compatible provider and fails without one.
 - `generated` always builds from the palette.
 
-`resolvedSource` tells you which one `auto` picked. A built-in usually cannot
-follow a custom accent, so choosing one falls back to a generated theme. Helix
-can be wrapped to drop its background; micro cannot, so a transparent micro is
-generated.
+`auto` and `upstream` remain accepted as compatibility spellings for
+`prefer-upstream` and `require-upstream`.
+
+`resolvedSource` reports `official`, `builtin`, `community`, `generated`, or
+`unavailable`. A built-in usually cannot follow a custom per-port accent, so
+choosing one falls back to a generated theme. Helix can wrap a built-in to drop
+its background; micro cannot, so transparent micro is generated. Provider-only
+ports such as GTK and Qt do not offer `generated` at all.
 
 ## Adding a theme
 
@@ -148,9 +197,22 @@ Drop a `themes/<name>/default.nix` in:
   accents = { blue = "blue"; };
   defaultAccent = "blue";
 
-  integrations.helix = {
-    kind = "builtin";
-    name = flavor: "example-${flavor}";
+  integrations = {
+    helix = {
+      kind = "builtin";
+      name = flavor: "example-${flavor}";
+    };
+
+    gtk.providers = [
+      {
+        kind = "official";
+        capabilities.accent = true;
+        resolve = { pkgs, flavor, accent, ... }: {
+          name = "example-${flavor}-${accent}";
+          package = pkgs.example-gtk.override { inherit flavor accent; };
+        };
+      }
+    ];
   };
 
   colours = { raw, isLight, flavor }: raw // { };
@@ -161,8 +223,10 @@ Drop a `themes/<name>/default.nix` in:
 ```
 
 `colours` maps the theme's own names onto Orchard's. `roles` changes which of
-them syntax and interface elements use. `integrations` names a theme the program
-already ships. A `ports.<name>` hook touches up one program.
+them syntax and interface elements use. An integration may be a built-in name or
+an ordered set of official, built-in and community providers. A provider's
+`resolve` result may include a package, file and adapter-specific metadata. A
+`ports.<name>` hook touches up one generated program theme.
 
 ## Adding a port
 
@@ -180,6 +244,9 @@ in
 {
   description = "Example program";
 
+  # Use this for session-wide or system-wide integrations.
+  activation = "explicit";
+
   options.italics = lib.mkOption { };
   theme = { p, ... }: theme p;
 
@@ -193,7 +260,9 @@ in
 ```
 
 Use `when` to follow the program's own enabled state, or leave it out to always
-apply. Leave out `theme` if the port writes no colours of its own.
+apply. Set `activation = "explicit"` when global auto-enable would be too broad.
+Leave out `theme` if the port writes no colours of its own; also set
+`generated = false` for a provider-only integration.
 
 Generated settings go in as low-priority defaults, so you can override a single
 one without turning the port off.

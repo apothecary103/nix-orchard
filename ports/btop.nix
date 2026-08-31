@@ -98,13 +98,19 @@ in
     {
       data,
       name,
+      provider,
       upstream,
       ...
     }:
+    let
+      selected = if provider == null then { } else provider;
+      providerFile = selected.file or (builtins.toFile "orchard-unused-btop-theme" "");
+    in
     {
-      xdg.config.files."btop/themes/${name}.theme" = lib.mkIf (upstream == null) {
-        text = render' data;
-      };
+      xdg.config.files."btop/themes/${name}.theme" = lib.mkMerge [
+        (lib.mkIf (upstream == null) { text = render' data; })
+        (lib.mkIf (selected ? file) { source = providerFile; })
+      ];
     };
 
   home = {
@@ -114,14 +120,24 @@ in
       {
         data,
         name,
+        provider,
         upstream,
         ...
       }:
-      {
-        programs.btop = {
-          settings.color_theme = lib.mkDefault name;
-          themes.${name} = lib.mkIf (upstream == null) (render' data);
-        };
-      };
+      let
+        selected = if provider == null then { } else provider;
+        providerFile = selected.file or (builtins.toFile "orchard-unused-btop-theme" "");
+      in
+      lib.mkMerge [
+        {
+          programs.btop = {
+            settings.color_theme = lib.mkDefault name;
+          }
+          // lib.optionalAttrs (upstream == null) { themes.${name} = render' data; };
+        }
+        (lib.mkIf (selected ? file) {
+          xdg.configFile."btop/themes/${name}.theme".source = providerFile;
+        })
+      ];
   };
 }

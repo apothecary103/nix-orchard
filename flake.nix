@@ -1,5 +1,5 @@
 {
-  description = "Orchard: hand-crafted themes as home-manager, hjem and NixOS modules";
+  description = "Orchard: upstream-first themes with semantic fallbacks for home-manager, hjem and NixOS";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   inputs.home-manager = {
@@ -32,7 +32,6 @@
       systems = [
         "aarch64-darwin"
         "aarch64-linux"
-        "x86_64-darwin"
         "x86_64-linux"
       ];
 
@@ -57,7 +56,29 @@
       ) engine.themes;
 
       hjemModules = modulesFor "hjem";
-      homeModules = modulesFor "home";
+      homeModules =
+        let
+          base = modulesFor "home";
+          gtk = {
+            imports = [ base.orchard ];
+            orchard.gtk.enable = lib.mkDefault true;
+          };
+          qt = {
+            imports = [ base.orchard ];
+            orchard.qt.enable = lib.mkDefault true;
+          };
+        in
+        base
+        // {
+          inherit gtk qt;
+          desktop = {
+            imports = [ base.orchard ];
+            orchard = {
+              gtk.enable = lib.mkDefault true;
+              qt.enable = lib.mkDefault true;
+            };
+          };
+        };
       nixosModules = modulesFor "nixos";
 
       checks = lib.genAttrs systems (

@@ -28,8 +28,79 @@
 
   defaultAccent = "mauve";
 
-  # btop is absent: catppuccin/btop is where its theme lives, and it is followed.
+  # External providers use the official Catppuccin packages in nixpkgs. Built-in
+  # providers name themes already shipped by the target application.
   integrations = {
+    btop.providers = [
+      {
+        kind = "official";
+        resolve =
+          {
+            pkgs,
+            flavor,
+            accent,
+            ...
+          }:
+          let
+            package = pkgs.catppuccin.override {
+              variant = flavor;
+              inherit accent;
+              themeList = [ "btop" ];
+            };
+          in
+          {
+            name = "catppuccin_${flavor}";
+            inherit package;
+            file = "${package}/btop/catppuccin_${flavor}.theme";
+          };
+      }
+    ];
+
+    gtk.providers = [
+      {
+        kind = "official";
+        capabilities.accent = true;
+        resolve =
+          {
+            pkgs,
+            flavor,
+            accent,
+            ...
+          }:
+          {
+            name = "catppuccin-${flavor}-${accent}-standard";
+            package = pkgs.catppuccin-gtk.override {
+              variant = flavor;
+              accents = [ accent ];
+            };
+          };
+      }
+    ];
+
+    qt.providers = [
+      {
+        kind = "official";
+        capabilities.accent = true;
+        supports = { pkgs, ... }: pkgs.stdenv.hostPlatform.isLinux;
+        resolve =
+          {
+            pkgs,
+            flavor,
+            accent,
+            ...
+          }:
+          {
+            name = "catppuccin-${flavor}-${accent}";
+            package = pkgs.catppuccin.override {
+              variant = flavor;
+              inherit accent;
+              themeList = [ "kvantum" ];
+            };
+            engine = "kvantum";
+          };
+      }
+    ];
+
     helix = {
       kind = "builtin";
       name = flavor: "catppuccin_${flavor}";

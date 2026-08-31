@@ -75,16 +75,23 @@ let
         flavors = palette.flavorsOf theme;
         accents = palette.accentsOf theme;
         integrations = theme.integrations or { };
+        providers = lib.concatMap (
+          integration: if integration ? providers then integration.providers else [ integration ]
+        ) (lib.attrValues integrations);
         unknownIntegrations = lib.filter (name: !(ports ? ${name}) || !(ports.${name} ? integration)) (
           lib.attrNames integrations
         );
         invalidKinds = lib.filter (
-          name:
-          !(lib.elem integrations.${name}.kind [
+          provider:
+          !(lib.elem (provider.kind or "") [
             "builtin"
             "official"
+            "community"
           ])
-        ) (lib.attrNames integrations);
+        ) providers;
+        invalidProviders = lib.filter (
+          provider: !(provider ? kind) || (!(provider ? resolve) && !(provider ? name))
+        ) providers;
       in
       lib.optional (!(lib.isString theme.source)) "${themeName}: source must be a string"
       ++ lib.optional (
@@ -99,11 +106,30 @@ let
       ++ lib.optional (
         unknownIntegrations != [ ]
       ) "${themeName}: integrations without capable ports: ${toString unknownIntegrations}"
-      ++ lib.optional (
-        invalidKinds != [ ]
-      ) "${themeName}: integrations with invalid kinds: ${toString invalidKinds}"
+      ++ lib.optional (invalidKinds != [ ]) "${themeName}: integrations with invalid provider kinds"
+      ++ lib.optional (invalidProviders != [ ]) "${themeName}: integrations with malformed providers"
     ) themes
   );
+
+  portFailures =
+    let
+      invalidActivations = lib.filterAttrs (
+        _: port:
+        !(lib.elem (port.activation or "auto") [
+          "auto"
+          "explicit"
+        ])
+      ) ports;
+      invalidProviderOnly = lib.filterAttrs (
+        _: port: (port.generated or true) == false && !(port ? integration)
+      ) ports;
+    in
+    lib.optional (
+      invalidActivations != { }
+    ) "ports with invalid activation policy: ${toString (lib.attrNames invalidActivations)}"
+    ++
+      lib.optional (invalidProviderOnly != { })
+        "provider-only ports without integration support: ${toString (lib.attrNames invalidProviderOnly)}";
 
   evergardenSpec = themes.evergarden;
   evergardenPalette = palette.mkPalette evergardenSpec {
@@ -181,7 +207,7 @@ let
       || !(lib.hasInfix "Evergarden function macros" evergardenBat)
     ) "evergarden: Bat lost its semantic TextMate overrides";
 
-  failures = paletteFailures ++ themeFailures ++ evergardenFailures;
+  failures = paletteFailures ++ themeFailures ++ portFailures ++ evergardenFailures;
 
   # A port naming something outside the vocabulary breaks every theme at once.
   probeValue = "#abcdef";
@@ -276,6 +302,16 @@ let
         accent = "probe";
         spec = { };
         inherit upstream;
+        provider =
+          if upstream == null then
+            null
+          else
+            {
+              kind = "builtin";
+              name = upstream;
+              engine = "kvantum";
+              package = pkgs.emptyDirectory;
+            };
       }
       // supplied
       // {
@@ -363,7 +399,7 @@ let
                   name: port:
                   let
                     declared = (spec.integrations or { }).${name} or null;
-                    upstream = if declared == null then null else declared.name flavor;
+                    upstream = if declared == null || declared ? providers then null else declared.name flavor;
                     baseName = if upstream == null then palette.nameOf spec flavor else upstream;
                     cfg = {
                       inherit transparent;
@@ -406,15 +442,24 @@ let
     default = { };
   };
 
-  stub.options = lib.genAttrs [
-    "console"
-    "environment"
-    "home"
-    "programs"
-    "rum"
-    "services"
-    "xdg"
-  ] (_: sink);
+  stub.options =
+    lib.genAttrs [
+      "console"
+      "environment"
+      "gtk"
+      "home"
+      "programs"
+      "qt"
+      "rum"
+      "services"
+      "xdg"
+    ] (_: sink)
+    // {
+      assertions = lib.mkOption {
+        type = lib.types.listOf lib.types.attrs;
+        default = [ ];
+      };
+    };
 
   evalSelector =
     orchard:
@@ -434,6 +479,25 @@ let
     # Global accents guide generated ports without replacing a hand-tuned
     # upstream theme that uses the theme's own fixed accent choices.
     accent = "blue";
+  };
+
+  autoSelection = evalSelector {
+    enable = true;
+    theme = "catppuccin";
+  };
+
+  desktopSelection = evalSelector {
+    enable = true;
+    theme = "catppuccin";
+    flavor = "macchiato";
+    accent = "blue";
+    gtk.enable = true;
+    qt.enable = true;
+  };
+
+  adwaitaSelection = evalSelector {
+    enable = false;
+    theme = "adwaita";
   };
 
   customSelection = evalSelector {
@@ -459,10 +523,40 @@ let
     }).helix.themeName
   );
 
+  unavailableGtk = builtins.tryEval (
+    (evalSelector {
+      enable = false;
+      theme = "evergarden";
+      gtk.source = "require-upstream";
+    }).gtk.themeName
+  );
+
   selectorFailures =
     lib.optional (
       defaultSelection.helix.resolvedSource != "builtin"
     ) "default Catppuccin Helix should use its builtin"
+    ++ lib.optional (
+      defaultSelection.btop.resolvedSource != "official"
+      || defaultSelection.btop.themeName != "catppuccin_mocha"
+    ) "default Catppuccin btop should use its official external provider"
+    ++ lib.optional (
+      autoSelection.gtk.enable || autoSelection.qt.enable
+    ) "session-wide GTK and Qt integrations must be explicit"
+    ++ lib.optional (
+      desktopSelection.gtk.resolvedSource != "official"
+      || desktopSelection.gtk.themeName != "catppuccin-macchiato-blue-standard"
+    ) "Catppuccin GTK did not resolve its official package provider"
+    ++ lib.optional (
+      if pkgs.stdenv.hostPlatform.isLinux then
+        desktopSelection.qt.resolvedSource != "official"
+        || desktopSelection.qt.themeName != "catppuccin-macchiato-blue"
+      else
+        desktopSelection.qt.resolvedSource != "unavailable"
+    ) "Catppuccin Qt did not resolve its official Kvantum provider"
+    ++ lib.optional (
+      adwaitaSelection.qt.resolvedSource
+      != (if pkgs.stdenv.hostPlatform.isLinux then "community" else "unavailable")
+    ) "Adwaita Qt provider provenance or platform support is wrong"
     ++ lib.optional (
       customSelection.btop.themeName != "gruvbox_dark_v2"
     ) "per-port theme selection did not resolve Gruvbox for btop"
@@ -478,7 +572,8 @@ let
     ++ lib.optional (
       customSelection.micro.resolvedSource != "generated"
     ) "transparent Micro should fall back to a generated theme"
-    ++ lib.optional unavailableUpstream.success "forcing a missing upstream integration should fail";
+    ++ lib.optional unavailableUpstream.success "forcing a missing upstream integration should fail"
+    ++ lib.optional unavailableGtk.success "forcing a missing GTK provider should fail";
 
   # Proves every theme's default flavor and accent resolve and the tree merges.
   optionTree =
@@ -559,7 +654,7 @@ let
           theme = "catppuccin";
           accent = "blue";
         }
-        // lib.mapAttrs (_: _: { enable = true; }) homePorts;
+        // lib.mapAttrs (name: _: { enable = name != "qt" || pkgs.stdenv.hostPlatform.isLinux; }) homePorts;
       }
     ];
   };

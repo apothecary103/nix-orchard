@@ -25,6 +25,37 @@
 
   # btop calls the light one plain `adwaita`; helix ships both.
   integrations = {
+    gtk.providers = [
+      {
+        kind = "builtin";
+        resolve =
+          { flavor, ... }:
+          {
+            name = if flavor == "dark" then "Adwaita-dark" else "Adwaita";
+            package = null;
+          };
+      }
+    ];
+
+    qt.providers = [
+      {
+        # FedoraQt's Adwaita adapter is maintained independently of GNOME.
+        kind = "community";
+        resolve =
+          {
+            pkgs,
+            flavor,
+            ...
+          }:
+          {
+            name = if flavor == "dark" then "adwaita-dark" else "adwaita";
+            package = if pkgs.stdenv.hostPlatform.isDarwin then null else pkgs.adwaita-qt;
+            engine = "adwaita";
+          };
+        supports = { pkgs, ... }: !pkgs.stdenv.hostPlatform.isDarwin;
+      }
+    ];
+
     helix = {
       kind = "builtin";
       name = flavor: "adwaita-${flavor}";
