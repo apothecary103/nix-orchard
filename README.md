@@ -156,6 +156,64 @@ accents. The flake also exposes `<flake>.palettes.<theme>.<flavor>`.
 
 Palettes are copied into the repo rather than fetched, so evaluation stays pure.
 
+## Colours from the wallpaper
+
+`orchard.wallpaper` runs a user service that reads what sway is actually
+showing and keeps a few files coloured to match:
+
+```nix
+orchard.wallpaper = {
+  enable = true;
+  target = "sway-session.target";
+  fuzzel.enable = true;
+  swaynag.enable = true;
+};
+```
+
+```
+# sway config, after the bar blocks
+${config.orchard.wallpaper.targets."sway.conf".fallback}
+include ${config.orchard.wallpaper.targets."sway.conf".path}
+```
+
+Sway never reports the background, so the service reads each running
+swaybg's own arguments and follows it through a pidfd, re-theming when
+`output * bg` respawns it. The image is laid out as swaybg lays it out on
+every output (fill crops, fit letterboxes in the fallback colour, center and
+tile do what they say), and only what is visible counts, weighted by each
+output's pixels.
+
+From those pixels, in OKLab with Ottosson's toe lightness:
+
+- **Greys** follow Catppuccin's lightness steps. Each step leans toward the
+  pixels of the wallpaper near its own lightness, so shadows tint the base
+  and highlights tint the text. The lean is capped where grey stops reading
+  as grey (about 0.026 chroma, less for warm hues and near white), and a
+  balanced or grey picture gives plain greys.
+- **The accent** is the wallpaper's own colour. Clusters from a deterministic
+  weighted k-means are scored in the manner of material-color-utilities,
+  except that area counts by how coloured it is, so skin tones and pale
+  washes do not outvote the subject. Greys, near-black and slivers never win.
+  A wallpaper with no colour keeps the theme's accent.
+- **Twelve hues** keep their names (red stays red). Each turns toward the
+  accent by half the gap, capped per hue and fading with distance, and
+  neighbours are kept apart. Chroma follows how vivid the wallpaper is, and
+  green sits lighter than red for red-green colour blindness.
+- **Contrast** is checked on the final hex, with WCAG 2 and APCA: text 7:1,
+  subtext 5.5 and 4.5, comments 3.5, every hue and the accent 4.5 on the base
+  and 3:1 on the panels.
+
+A template names colours as `config.orchard.palette` does, written
+`{{surface.background}}` for `#rrggbb` or `{{ui.accent|bare}}` for `rrggbb`.
+Add your own under `orchard.wallpaper.targets.<file>`, with an optional
+`reload` command. Each target's `fallback` is the template filled from the
+configured theme. The current palette is also kept as JSON at
+`orchard.wallpaper.palette`. To try a picture by hand:
+
+```sh
+orchard-wallpaper palette --image wall.png --mode fill --size 3024x1964
+```
+
 ## Upstream themes
 
 Themes can have several providers. Orchard tries compatible providers in this
