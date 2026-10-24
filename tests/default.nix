@@ -716,6 +716,13 @@ let
               autoEnable = false;
               theme = "catppuccin";
               accent = "blue";
+
+              wallpaper = {
+                enable = true;
+                target = "sway-session.target";
+                fuzzel.enable = true;
+                swaynag.enable = true;
+              };
             }
             // lib.mapAttrs (_: _: { enable = true; }) hjemPorts;
           };
@@ -734,6 +741,22 @@ let
     hjemUser.xdg.data.files
     hjemUser.xdg.state.files
   ];
+
+  hjemWallpaper = hjemUser.orchard.wallpaper;
+
+  # The smoke config is Linux's, so its files are rebuilt here for the host.
+  wallpaperConfig = pkgs.writeText "orchard-wallpaper.json" (
+    builtins.toJSON {
+      inherit (hjemWallpaper) flavor tint accent;
+      stateDir = hjemWallpaper.stateDirectory;
+      targets = lib.mapAttrsToList (name: t: {
+        inherit name;
+        inherit (t) path sway reload;
+        template = pkgs.writeText "template" t.template;
+        fallback = pkgs.writeText "fallback" t.fallback;
+      }) hjemWallpaper.targets;
+    }
+  );
 
   hjemFailures = map (entry: entry.message) (
     lib.filter (entry: !entry.assertion) hjemSmoke.config.assertions
@@ -767,6 +790,26 @@ in
         else
           "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" hjemFailures)} >&2; exit 1"
       );
+
+  # The Rust side must know every colour the Nix side lets a template name,
+  # and the service must be wired to the session.
+  wallpaper =
+    pkgs.runCommandLocal "themes-wallpaper"
+      {
+        fallbacks = lib.concatStrings (lib.mapAttrsToList (_: t: t.fallback) hjemWallpaper.targets);
+        service = builtins.unsafeDiscardStringContext hjemUser.systemd.services.orchard-wallpaper.serviceConfig.ExecStart;
+        nativeBuildInputs = [ (pkgs.callPackage ../wallpaper/package.nix { }) ];
+      }
+      ''
+        grep -q 'orchard-wallpaper watch --config' <<<"$service"
+        for colour in 24273a eff1f5 c814a0 000000; do
+          orchard-wallpaper render --config ${wallpaperConfig} --color "$colour" > rendered
+          if grep -q '{{' rendered; then cat rendered >&2; exit 1; fi
+        done
+        grep -q 'client.focused ' <<<"$fallbacks"
+        grep -q 'bar bar-0 colors background #' <<<"$fallbacks"
+        touch $out
+      '';
 
   palettes = pkgs.runCommandLocal "themes-palettes" { nativeBuildInputs = [ pkgs.python3 ]; } (
     if failures == [ ] then
