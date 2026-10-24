@@ -114,7 +114,14 @@ pub fn find_swaybg() -> Vec<Swaybg> {
         .filter_map(|entry| {
             let pid: i32 = entry.file_name().to_str()?.parse().ok()?;
             let dir = entry.path();
-            if std::fs::read_to_string(dir.join("comm")).ok()?.trim() != "swaybg" {
+            let comm = std::fs::read_to_string(dir.join("comm")).ok()?;
+            let cmdline = std::fs::read(dir.join("cmdline")).ok()?;
+            let args: Vec<String> = cmdline
+                .split(|b| *b == 0)
+                .filter(|a| !a.is_empty())
+                .map(|a| String::from_utf8_lossy(a).into_owned())
+                .collect();
+            if !is_swaybg(comm.trim(), args.first()?) {
                 return None;
             }
             let status = std::fs::read_to_string(dir.join("status")).ok()?;
@@ -122,12 +129,6 @@ pub fn find_swaybg() -> Vec<Swaybg> {
             if owner != uid {
                 return None;
             }
-            let cmdline = std::fs::read(dir.join("cmdline")).ok()?;
-            let args: Vec<String> = cmdline
-                .split(|b| *b == 0)
-                .filter(|a| !a.is_empty())
-                .map(|a| String::from_utf8_lossy(a).into_owned())
-                .collect();
             let cwd = std::fs::read_link(dir.join("cwd")).unwrap_or_else(|_| "/".into());
             // Field 22 of stat is the start time; comm may hold spaces, so count from ')'.
             let stat = std::fs::read_to_string(dir.join("stat")).ok()?;
@@ -137,6 +138,12 @@ pub fn find_swaybg() -> Vec<Swaybg> {
         .collect();
     found.sort_by_key(|s| s.started);
     found
+}
+
+/// Wrapped programs (nixpkgs' makeWrapper) run as `.swaybg-wrapped`, but
+/// keep `swaybg` as argv[0], so either name counts.
+fn is_swaybg(comm: &str, argv0: &str) -> bool {
+    comm == "swaybg" || Path::new(argv0).file_name().is_some_and(|n| n == "swaybg")
 }
 
 /// swaybg's own reading of its arguments (main.c): options before the first
@@ -236,6 +243,14 @@ mod tests {
         assert_eq!(got.len(), 2);
         assert_eq!(got[0].1, Background::Image { path: "/w.png".into(), mode: Mode::Fill, fallback: Rgb([0x11, 0x22, 0x33]) });
         assert_eq!(got[1].1, Background::Solid(Rgb([0x44, 0x55, 0x66])));
+    }
+
+    #[test]
+    fn finds_wrapped_swaybg() {
+        assert!(is_swaybg("swaybg", "swaybg"));
+        assert!(is_swaybg(".swaybg-wrapped", "/nix/store/x-swaybg-1.2.2/bin/swaybg"));
+        assert!(!is_swaybg(".swaybg-wrapped", "/nix/store/x-swaybg-1.2.2/bin/.swaybg-wrapped"));
+        assert!(!is_swaybg("swaylock", "/run/current-system/sw/bin/swaylock"));
     }
 
     #[test]
