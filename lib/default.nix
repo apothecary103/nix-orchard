@@ -41,6 +41,7 @@ rec {
         themes
         ports
         palette
+        render
         ;
     };
 }

@@ -4,6 +4,7 @@
   themes,
   ports,
   palette,
+  render,
 }:
 
 let
@@ -374,7 +375,18 @@ in
   ]
   ++ lib.mapAttrsToList (
     name: _: lib.mkAliasOptionModule [ "orchard" name "flavour" ] [ "orchard" name "flavor" ]
-  ) available;
+  ) available
+  # Wallpaper colours live in a user session, so NixOS has no use for them.
+  ++ lib.optional (class != "nixos") (
+    import ./wallpaper.nix {
+      inherit
+        lib
+        class
+        ports
+        render
+        ;
+    }
+  );
 
   options.orchard = {
     enable = lib.mkEnableOption "orchard";
