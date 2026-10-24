@@ -92,6 +92,11 @@
         }
       );
 
+      packages = lib.genAttrs systems (system: rec {
+        orchard-wallpaper = nixpkgs.legacyPackages.${system}.callPackage ./wallpaper/package.nix { };
+        default = orchard-wallpaper;
+      });
+
       formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
     };
 }
