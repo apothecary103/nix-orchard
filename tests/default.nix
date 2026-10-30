@@ -637,6 +637,7 @@ let
           helix.enable = true;
           lazygit.enable = true;
           micro.enable = true;
+          nushell.enable = true;
           starship.enable = true;
           tmux.enable = true;
           wezterm.enable = true;
@@ -706,6 +707,7 @@ let
               helix.enable = true;
               imv.enable = true;
               kitty.enable = true;
+              nushell.enable = true;
               starship.enable = true;
               yazi.enable = true;
               zsh.enable = true;

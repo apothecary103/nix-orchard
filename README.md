@@ -67,7 +67,7 @@ console require their own `enable = true` even while `autoEnable` is on.
 These are the programs Orchard knows:
 
 `alacritty` `bat` `btop` `console` `delta` `eza` `fish` `foot` `fuzzel` `fzf` `gtk`
-`ghostty` `glamour` `helix` `imv` `kitty` `lazygit` `mako` `micro` `rmpc`
+`ghostty` `glamour` `helix` `imv` `kitty` `lazygit` `mako` `micro` `nushell` `rmpc`
 `qt` `starship` `tmux` `tofi` `vivid` `wezterm` `yazi` `zathura` `zellij`
 `zsh-syntax-highlighting`
 
