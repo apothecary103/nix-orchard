@@ -152,6 +152,7 @@ accents. The flake also exposes `<flake>.palettes.<theme>.<flavor>`.
 | `gruvbox-material` | the same six | the same seven | [sainnhe/gruvbox-material](https://github.com/sainnhe/gruvbox-material) |
 | `luna` | luna | blue, orange, purple, green, amber, red, yellow | [WTFox/luna.nvim](https://github.com/WTFox/luna.nvim) |
 | `onedark` | dark, light | red, orange, yellow, green, aqua, blue, purple | [joshdick/onedark.vim](https://github.com/joshdick/onedark.vim) |
+| `rose-pine` | main, moon, dawn | love, gold, rose, pine, foam, iris | [rose-pine/palette](https://github.com/rose-pine/palette) |
 | `zed` | dark, light | red, orange, yellow, green, aqua, blue, purple | [Zed's One](https://github.com/zed-industries/zed/blob/main/assets/themes/one/one.json) |
 
 Palettes are copied into the repo rather than fetched, so evaluation stays pure.
