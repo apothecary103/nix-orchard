@@ -3,6 +3,7 @@
 let
   render = import ./render.nix { inherit lib; };
   palette = import ./palette.nix { inherit lib; };
+  matugen = import ./matugen.nix { inherit lib; };
 
   loadDir =
     dir:
@@ -20,7 +21,7 @@ let
       );
 in
 rec {
-  inherit render palette;
+  inherit render palette matugen;
 
   inherit (render) noHash;
 
@@ -42,6 +43,7 @@ rec {
         ports
         palette
         render
+        matugen
         ;
     };
 }
