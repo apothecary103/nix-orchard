@@ -59,13 +59,24 @@ let
       wrongPublicGroups != [ ]
     ) "${themeName}/${flavor}/${accent}: non-canonical public groups ${toString wrongPublicGroups}";
 
+  # A generated theme, from a gradient with a clear source colour, so matugen
+  # has something to choose and every role and hue must come out whole.
+  matugenImage = pkgs.runCommandLocal "matugen-test.png" { nativeBuildInputs = [ pkgs.imagemagick ]; } ''
+    magick -size 64x64 "gradient:#2a6f4e-#e8c07a" "png:$out"
+  '';
+
+  matugenTheme = engine.matugen.theme {
+    inherit pkgs;
+    image = matugenImage;
+  };
+
   paletteFailures = lib.concatLists (
     lib.mapAttrsToList (
       themeName: theme:
       lib.concatMap (
         flavor: lib.concatMap (accent: checkPalette themeName theme flavor accent) (palette.accentsOf theme)
       ) (palette.flavorsOf theme)
-    ) themes
+    ) (themes // { matugen = matugenTheme; })
   );
 
   themeFailures = lib.concatLists (
