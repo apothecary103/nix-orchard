@@ -5,16 +5,29 @@
   ports,
   palette,
   render,
+  matugen,
 }:
 
 let
   available = lib.filterAttrs (_: port: port ? ${class}) ports;
 
-  names = lib.attrNames themes;
+  staticThemes = themes;
+
+  # matugen's theme is generated from an image named in config, so it joins
+  # the static ones by name here and by value inside the module.
+  names = lib.attrNames themes ++ [ "matugen" ];
 
   # Types take the union because a type cannot read `config`; assertions narrow it.
-  allFlavors = lib.unique (lib.concatMap palette.flavorsOf (lib.attrValues themes));
-  allAccents = lib.unique (lib.concatMap palette.accentsOf (lib.attrValues themes));
+  allFlavors = lib.unique (
+    lib.concatMap palette.flavorsOf (lib.attrValues themes)
+    ++ [
+      "dark"
+      "light"
+    ]
+  );
+  allAccents = lib.unique (
+    lib.concatMap palette.accentsOf (lib.attrValues themes) ++ matugen.accents
+  );
 
   binding =
     port:
@@ -40,6 +53,22 @@ in
 
 let
   cfg = config.orchard;
+
+  themes = staticThemes // {
+    matugen =
+      if cfg.matugen.image == null then
+        throw "orchard: the matugen theme needs orchard.matugen.image"
+      else
+        matugen.theme {
+          inherit pkgs;
+          inherit (cfg.matugen)
+            image
+            type
+            contrast
+            prefer
+            ;
+        };
+  };
 
   # Ports with no program module to hang off look for the package instead.
   installedIn = {
@@ -426,6 +455,49 @@ in
       '';
     };
 
+    matugen = {
+      image = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = ''
+          The image the `matugen` theme takes its colours from: Material 3
+          roles for a dark and a light flavor, with the hues every port needs
+          harmonized toward the image's source colour.
+        '';
+      };
+      type = lib.mkOption {
+        type = lib.types.enum [
+          "scheme-content"
+          "scheme-expressive"
+          "scheme-fidelity"
+          "scheme-fruit-salad"
+          "scheme-monochrome"
+          "scheme-neutral"
+          "scheme-rainbow"
+          "scheme-tonal-spot"
+          "scheme-vibrant"
+        ];
+        default = "scheme-tonal-spot";
+        description = "Material 3 scheme variant to build the roles with.";
+      };
+      contrast = lib.mkOption {
+        type = lib.types.numbers.between (-1) 1;
+        default = 0;
+        description = "Contrast level, from -1 (least) through 0 (as specified) to 1 (most).";
+      };
+      prefer = lib.mkOption {
+        type = lib.types.enum [
+          "darkness"
+          "lightness"
+          "saturation"
+          "less-saturation"
+          "value"
+        ];
+        default = "saturation";
+        description = "Which candidate source colour to take when the image offers several.";
+      };
+    };
+
     transparent = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -463,7 +535,7 @@ in
             if integration ? providers then integration.providers else [ integration ]
           )
         ) (t.integrations or { });
-      }) themes;
+      }) (if cfg.matugen.image == null then staticThemes else themes);
       description = "Every theme on offer, with the flavors and accents it takes.";
     };
   }
