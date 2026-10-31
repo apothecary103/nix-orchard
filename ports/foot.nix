@@ -2,6 +2,8 @@
 
 let
   # catppuccin/foot, which takes bare RRGGBB; selection is overlay a third into base.
+  # foot 1.23 split [colors] by the system's light or dark preference and 1.28
+  # dropped it, so the palette fills both and the theme wears either way.
   theme =
     p:
     let
@@ -14,8 +16,6 @@ let
             lib.sublist offset 8 p.terminal.ansi
           )
         );
-    in
-    {
       colors = {
         foreground = c p.surface.text;
         background = c p.surface.background;
@@ -39,6 +39,10 @@ let
       }
       // slots "regular" 0
       // slots "bright" 8;
+    in
+    {
+      colors-dark = colors;
+      colors-light = colors;
 
       cursor.color = "${
         c (if p.isLight then p.surface.background else p.surface.shadow)
