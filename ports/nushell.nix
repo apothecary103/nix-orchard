@@ -1,85 +1,102 @@
 { lib, ... }:
 
 let
-  # nushell's own default theme, with each style on its nearest palette role.
+  # catppuccin/nushell's scheme, in palette roles: commands that resolve in the
+  # function colour and those that do not in plain text, arguments and
+  # strings alike, flags and variables in italics, operators and pipes in
+  # one colour, punctuation receding, and bold only for table headers.
   theme =
     p:
     let
-      bold = fg: {
+      italic = fg: {
         inherit fg;
-        attr = "b";
+        attr = "i";
       };
+      recognized = p.syntax.function;
+      unrecognized = p.surface.text;
+      constant = p.syntax.number;
+      punctuation = p.surface.neutral5;
+      operator = p.syntax.operator;
+      string = p.syntax.string;
+      virtual = p.surface.neutral2;
+      variable = italic p.syntax.variable;
+      filepath = p.hue.yellow;
     in
     {
-      separator = p.surface.neutral4;
-      leading_trailing_space_bg.attr = "n";
-      header = bold p.ui.title;
-      empty = p.hue.blue;
-      bool = p.syntax.constant;
-      int = p.syntax.number;
-      float = p.syntax.number;
-      filesize = p.syntax.number;
-      duration = p.syntax.special;
-      datetime = p.syntax.special;
-      range = p.syntax.special;
-      string = p.syntax.string;
-      nothing = p.syntax.constant;
-      binary = p.syntax.special;
-      cell-path = p.surface.textMuted;
-      row_index = bold p.ui.accent;
+      separator = {
+        fg = virtual;
+        attr = "b";
+      };
+      leading_trailing_space_bg = {
+        fg = p.ui.accent;
+        attr = "u";
+      };
+      header = {
+        fg = p.surface.text;
+        attr = "b";
+      };
+      row_index = virtual;
       record = p.surface.text;
       list = p.surface.text;
-      closure = p.surface.text;
-      block = p.surface.text;
-      glob = p.surface.text;
-      hints = p.surface.neutral3;
+      hints = virtual;
       search_result = {
         fg = p.surface.background;
         bg = p.ui.search;
       };
+      empty.attr = "n";
+      closure = p.syntax.special;
+      block = recognized;
+      glob = filepath;
+      cell-path = punctuation;
+      bool = constant;
+      int = constant;
+      float = constant;
+      nothing = constant;
+      binary = constant;
+      filesize = constant;
+      duration = constant;
+      datetime = constant;
+      range = operator;
+      string = string;
 
-      shape_and = bold p.syntax.operator;
-      shape_binary = bold p.syntax.special;
-      shape_block = bold p.syntax.punctuation;
-      shape_bool = p.syntax.constant;
-      shape_closure = bold p.syntax.punctuation;
-      shape_custom = p.syntax.function;
-      shape_datetime = bold p.syntax.special;
-      shape_directory = p.hue.aqua;
-      shape_external = p.syntax.function;
-      shape_external_resolved = bold p.syntax.function;
-      shape_externalarg = p.surface.text;
-      shape_filepath = p.hue.aqua;
-      shape_flag = bold p.syntax.property;
-      shape_float = bold p.syntax.number;
-      shape_garbage = {
-        fg = p.surface.background;
-        bg = p.status.error;
-        attr = "b";
-      };
-      shape_glob_interpolation = bold p.hue.aqua;
-      shape_globpattern = bold p.hue.aqua;
-      shape_int = bold p.syntax.number;
-      shape_internalcall = bold p.syntax.function;
-      shape_keyword = bold p.syntax.keyword;
-      shape_list = bold p.syntax.punctuation;
-      shape_literal = p.syntax.constant;
-      shape_match_pattern = p.syntax.special;
+      shape_closure = p.syntax.special;
+      shape_flag = italic p.syntax.property;
       shape_matching_brackets.attr = "u";
-      shape_nothing = p.syntax.constant;
-      shape_operator = p.syntax.operator;
-      shape_or = bold p.syntax.operator;
-      shape_pipe = bold p.syntax.operator;
-      shape_range = bold p.syntax.special;
-      shape_raw_string = p.syntax.string;
-      shape_record = bold p.syntax.punctuation;
-      shape_redirection = bold p.syntax.operator;
-      shape_signature = bold p.syntax.type;
-      shape_string = p.syntax.string;
-      shape_string_interpolation = bold p.syntax.escape;
-      shape_table = bold p.syntax.punctuation;
-      shape_vardecl = p.syntax.variable;
-      shape_variable = p.syntax.variable;
+      shape_garbage = p.status.error;
+      shape_keyword = p.syntax.keyword;
+      shape_match_pattern = string;
+      shape_signature = p.syntax.type;
+      shape_table = punctuation;
+      shape_list = punctuation;
+      shape_record = punctuation;
+      shape_block = recognized;
+      shape_vardecl = variable;
+      shape_variable = variable;
+      shape_external = unrecognized;
+      shape_internalcall = recognized;
+      shape_external_resolved = recognized;
+      shape_custom = p.syntax.macro;
+      shape_range = operator;
+      shape_pipe = operator;
+      shape_operator = operator;
+      shape_redirection = operator;
+      shape_and = operator;
+      shape_or = operator;
+      shape_directory = filepath;
+      shape_filepath = filepath;
+      shape_glob_interpolation = filepath;
+      shape_globpattern = filepath;
+      shape_int = constant;
+      shape_bool = constant;
+      shape_float = constant;
+      shape_binary = constant;
+      shape_datetime = constant;
+      shape_literal = constant;
+      shape_nothing = constant;
+      shape_string = string;
+      shape_string_interpolation = p.syntax.escape;
+      shape_raw_string = string;
+      shape_externalarg = string;
     };
 
   # A record merged over whatever color_config holds, so user styles still win.
@@ -92,10 +109,14 @@ let
 
   emit = data: ''
     $env.config.color_config = ($env.config.color_config | merge ${value data})
+    $env.config.highlight_resolved_externals = true
   '';
 in
 {
   description = "nushell";
+
+  # Upstream themes (catppuccin/nushell) are sourced as they are.
+  integration = { };
 
   theme = { p, ... }: theme p;
 
@@ -103,9 +124,11 @@ in
     when = { config, ... }: config.rum.programs.nushell.enable;
 
     config =
-      { data, ... }:
+      { data, provider, ... }:
       {
-        rum.programs.nushell.extraConfig = lib.mkBefore (emit data);
+        rum.programs.nushell.extraConfig = lib.mkBefore (
+          if provider != null && provider ? file then "source ${provider.file}\n" else emit data
+        );
       };
   };
 
@@ -113,9 +136,11 @@ in
     when = { config, ... }: config.programs.nushell.enable;
 
     config =
-      { data, ... }:
+      { data, provider, ... }:
       {
-        programs.nushell.extraConfig = lib.mkBefore (emit data);
+        programs.nushell.extraConfig = lib.mkBefore (
+          if provider != null && provider ? file then "source ${provider.file}\n" else emit data
+        );
       };
   };
 }

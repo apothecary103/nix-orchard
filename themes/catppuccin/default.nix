@@ -31,6 +31,28 @@
   # External providers use the official Catppuccin packages in nixpkgs. Built-in
   # providers name themes already shipped by the target application.
   integrations = {
+    # catppuccin/nushell, which nixpkgs does not package: the theme sets the
+    # whole color_config and turns on highlight_resolved_externals.
+    nushell.providers = [
+      {
+        kind = "official";
+        resolve =
+          { pkgs, flavor, ... }:
+          let
+            src = pkgs.fetchFromGitHub {
+              owner = "catppuccin";
+              repo = "nushell";
+              rev = "815dfc6ea61f2746ff27b54ef425cfeb7b51dda8";
+              hash = "sha256-124T2pCmwirl8eLAy3h1fDOQZJf//3KJ7GwIP+u6YQ4=";
+            };
+          in
+          {
+            name = "catppuccin_${flavor}";
+            file = "${src}/themes/catppuccin_${flavor}.nu";
+          };
+      }
+    ];
+
     btop.providers = [
       {
         kind = "official";
