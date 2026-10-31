@@ -153,6 +153,7 @@ accents. The flake also exposes `<flake>.palettes.<theme>.<flavor>`.
 | `luna` | luna | blue, orange, purple, green, amber, red, yellow | [WTFox/luna.nvim](https://github.com/WTFox/luna.nvim) |
 | `onedark` | dark, light | red, orange, yellow, green, aqua, blue, purple | [joshdick/onedark.vim](https://github.com/joshdick/onedark.vim) |
 | `rose-pine` | main, moon, dawn | love, gold, rose, pine, foam, iris | [rose-pine/palette](https://github.com/rose-pine/palette) |
+| `sakura` | night, day | the twelve hues | designed here, in OKLCH |
 | `matugen` | dark, light | primary, secondary, tertiary and the eight hues | generated from `orchard.matugen.image` by [matugen](https://github.com/InioX/matugen) |
 | `zed` | dark, light | red, orange, yellow, green, aqua, blue, purple | [Zed's One](https://github.com/zed-industries/zed/blob/main/assets/themes/one/one.json) |
 
